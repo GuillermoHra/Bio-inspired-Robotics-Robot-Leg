@@ -1,7 +1,7 @@
 function simulate_leg_GRAC()
 
 close all
-addpath([pwd '/AutoDerived'])
+addpath([pwd '..\AutoDerived'])
  %% Definte fixed paramters (obtained from CAD)
 % p=[thh0;thh; m1; I1; m2 ;I2; m3 ;I3; m4; I4; l1; l2; l3 ;l4;lc2;lc3;lc4;lh0; g ]; %parameters
 thh0=deg2rad(15);
