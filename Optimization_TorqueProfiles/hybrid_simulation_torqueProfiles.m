@@ -1,5 +1,6 @@
 function [tout, zout, uout, indices, sols, land_time, Fout] = hybrid_simulation(z0,ctrl,p,tspan)
-addpath([pwd '/AutoDerived'])
+path = 'C:\Users\Usuario\Documents\MATLAB\Bio-inspired Robotics\Final Project Landing Robot\Bio-inspired-Robotics-Robot-Leg';
+addpath([path '\AutoDerived'])
 %Inputs:
 % z0 - the initial state
 % ctrl- control structure
@@ -104,14 +105,14 @@ function u = control_laws(t,z,ctrl,p,iphase)
 
     if iphase == 1
         t_ctrl = t - ctrl.land_time;
-        ctrl.t = linspace(0,ctrl.dur,length(ctrl.T(1:2)));
-        u1 = interp1(ctrl.t,ctrl.T(1:2),t_ctrl,'linear','extrap');
-        u2 = interp1(ctrl.t,ctrl.T(3:4),t_ctrl,'linear','extrap');
+        ctrl.t = linspace(0,ctrl.dur,length(ctrl.T(1:3)));
+        u1 = interp1(ctrl.t,ctrl.T(1:3),t_ctrl,'linear','extrap');
+        u2 = interp1(ctrl.t,ctrl.T(4:6),t_ctrl,'linear','extrap');
         u=[u1;u2];
         
     else
         %falling
-% PD Control in stance
+        % PD Control in flight
         thk = z(2,:);            % leg angle
         dthk = z(5,:);           % leg angular velocity
         tha = z(3,:);            % leg angle

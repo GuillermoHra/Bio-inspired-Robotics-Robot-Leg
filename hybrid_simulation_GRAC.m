@@ -69,34 +69,32 @@ end
 %% Continuous dynamics
 function [dz, Fc] = dynamics_continuous(t,z,ctrl,p,iphase)
 
-    u = control_laws(t,z,ctrl,p,iphase);  % get controls at this instant
+       u = control_laws(t,z,ctrl,p,iphase);  % get controls at this instant
 
-   
-    % Contact model
-    %if iphase == 2  % in flight phase
+       % Contact model
+       %if iphase == 2  % in flight phase
        %Fc = 0;
-                % in stance phase
+       % in stance phase
+       
        C = position_foot(z,p); %y
        if C(2) <= 0  
-        dC= velocity_foot(z,p); %dy
-        Fc = -5000 * C(2) - 30*dC(2);
-        if Fc < 0
-            Fc = 0;
-        end
+            dC= velocity_foot(z,p); %dy
+            Fc = -5000 * C(2) - 30*dC(2);
+            if Fc < 0
+                Fc = 0;
+            end
        else
-        Fc = 0;
+            Fc = 0;
        end
-        %Fc
     
-    A = A_GRAC_leg(z,p);                 % get full A matrix
-    b = b_GRAC_leg(z,u,Fc,p);               % get full b vector
-    
-    x = A\b;                % solve system for accelerations (and possibly forces)
-    dz(1:3,1) = z(4:6); % assign velocities to time derivative of state vector
-    dz(4:6,1) = x(1:3);   % assign accelerations to time derivative of state vector
-    
+       A = A_GRAC_leg(z,p);                 % get full A matrix
+       b = b_GRAC_leg(z,u,Fc,p);            % get full b vector
 
-    dz(7) = sum(u.^2); %1              % change to integrate torque squared
+       x = A\b;                     % solve system for accelerations (and possibly forces)
+       dz(1:3,1) = z(4:6);          % assign velocities to time derivative of state vector
+       dz(4:6,1) = x(1:3);          % assign accelerations to time derivative of state vector
+
+       dz(7) = sum(u.^2);           %1 change to integrate torque squared
 end
 
 %% Control
@@ -146,7 +144,6 @@ Fct=[];
             
            Fct=[Fct Fc];
         end
-                % change to integrate torque squared
 end
 
 

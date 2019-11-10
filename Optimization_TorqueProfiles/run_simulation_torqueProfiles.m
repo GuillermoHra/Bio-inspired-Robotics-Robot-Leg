@@ -7,23 +7,26 @@ clear all; close all; clc;
 % http://www.mathworks.com/help/matlab/matlab_env/understanding-file-locations-in-matlab.html
 % For more information about the Matlab path, see
 % http://www.mathworks.com/help/matlab/matlab_env/what-is-the-matlab-search-path.html
-setpath                                     % add AutoDerived, Modeling, and Visualization folders to Matlab path
 
+%setpath                                     % add AutoDerived, Modeling, and Visualization folders to Matlab path
+path = 'C:\Users\Usuario\Documents\MATLAB\Bio-inspired Robotics\Final Project Landing Robot\Bio-inspired-Robotics-Robot-Leg';
+addpath([path])
+addpath([path '\AutoDerived'])
 p = parameters();                           % get parameters from file
-thki=deg2rad(45);
-thai=deg2rad(0);
+thki=deg2rad(90);
+thai=deg2rad(75);
 z0 = [.5; thki;thai; 0; 0;0; 0]; %y, thk, tha, vy, vk, va ,uank^2                % set initial state
 
 % set guess
 tf = .5;                                        % simulation final time
                                 % control time points
-ctrl.T = [0 0 0 0];                               % control values
+ctrl.T = [0 -.14 -.20 0 -.08 -.12];       % -.204  -.1272     control values
 ctrl.dur = 0.3;
 ctrl.land_time = 0;
 
 % % setup and solve nonlinear programming problem
-problem.objective = @(x) objective(x,z0,p);     % create anonymous function that returns objective
-problem.nonlcon = @(x) constraints(x,z0,p);     % create anonymous function that returns nonlinear constraints
+problem.objective = @(x) objective_torqueProfiles(x,z0,p);     % create anonymous function that returns objective
+problem.nonlcon = @(x) constraints_torqueProfiles(x,z0,p);     % create anonymous function that returns nonlinear constraints
 problem.x0 = [tf  ctrl.T];                   % initial guess for decision variables
 problem.lb = [.1 -10*ones(size(ctrl.T))];     % lower bound on decision variables
 problem.ub = [2  10*ones(size(ctrl.T))];     % upper bound on decision variables
@@ -38,8 +41,8 @@ x = fmincon(problem);                           % solve nonlinear programming pr
 
 tf = x(1);                                        % simulation final time
                                   % control time points
-ctrl.T = [x(2) x(3) x(4) x(5)];                               % control values
-[t, z, u, indices, sols, land_time, fc] = hybrid_simulation_GRAC(z0,ctrl,p,[0 tf]); % run simulation
+ctrl.T = [x(2) x(3) x(4) x(5) x(6) x(7)];                               % control values
+[t, z, u, indices, sols, land_time, fc] = hybrid_simulation_torqueProfiles(z0,ctrl,p,[0 tf]); % run simulation
 
 % Plot COM for your submissions
 figure(1)
@@ -67,6 +70,6 @@ title('Contact Force Plots ')
 %%
 % Run the animation
 figure(4)                          % get the coordinates of the points to animate
-speed = .25;                                 % set animation speed
+speed = .05;                                 % set animation speed
 clf                                         % clear fig
 animate_simple_GRAC(t,z,p,speed)                 % run animation
