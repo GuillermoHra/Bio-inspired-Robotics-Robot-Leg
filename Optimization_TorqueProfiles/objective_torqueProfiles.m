@@ -44,5 +44,6 @@ f = -y(end);  % negative of COM height
 %f = y_foot(end); % foot y position
 % maximize u2
 %f = -z(7,end);
-
+%f = max(abs(diff(diff(diff(y)))));
+% try also error of impedance controller
 end

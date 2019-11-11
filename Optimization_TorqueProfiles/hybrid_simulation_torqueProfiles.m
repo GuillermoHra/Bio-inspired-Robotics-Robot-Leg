@@ -92,7 +92,7 @@ function [dz, Fc] = dynamics_continuous(t,z,ctrl,p,iphase)
     A = A_GRAC_leg(z,p);                 % get full A matrix
     b = b_GRAC_leg(z,u,Fc,p);               % get full b vector
     
-    x = A\b;                % solve system for accelerations (and possibly forces)
+    x = A\(b);                % solve system for accelerations (and possibly forces)
     dz(1:3,1) = z(4:6); % assign velocities to time derivative of state vector
     dz(4:6,1) = x(1:3);   % assign accelerations to time derivative of state vector
     
@@ -127,7 +127,6 @@ function u = control_laws(t,z,ctrl,p,iphase)
         u2 = -k*(tha-thad) - b*dtha;
         u=[u1;u2];
     end
-
 end
 
 

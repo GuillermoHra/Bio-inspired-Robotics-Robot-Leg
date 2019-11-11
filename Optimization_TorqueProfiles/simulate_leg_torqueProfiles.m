@@ -41,17 +41,15 @@ g =9.81;
     th1_vals=sol.y(2,:);
     th2_vals=sol.y(3,:);
     %thm_vals=sol.y(7,:);
-    
-    % added to plot torque profiles for impedance controller
-    Tknee = sol.y(7,:);
-    Tankle = sol.y(8,:);
-    contact_F = sol.y(9, :);
-    
     %% Compute Energy
     E = energy_GRAC_leg(sol.y,p);
     %figure;
     %plot(sol.x,E);xlabel('Time (s)'); ylabel('Energy (J)');
     
+%     %% added to plot torque profiles for impedance controller
+%     Tknee = sol.y(7,:);
+%     Tankle = sol.y(8,:);
+%     contact_F = sol.y(9, :);
 %     % plot torque profiles
 %     figure;
 %     subplot(2,1,1)
@@ -82,6 +80,16 @@ g =9.81;
 %     plot(sol.x, y_vals); % COM height
 %     xlabel('Time (s)'); ylabel('Position (m)'); legend({'x','y', 'COM'});
     
+%     tout = []; zout = []; uout = []; Fout=[];
+%     for ii = 1:length(sol)
+%         sol = sol(ii);                                     % get the next solution structure
+%         tout = [tout sol.x];                                % append time points
+%         zout = [zout sol.y];                                % append states
+%         uout = [uout control_laws(sol.y,p)];   % append controls
+%         Fout = [Fout contact_force(sol.y,p)];   % append contact force
+%     end
+
+    uout = control_law(sol.x, sol.y, p)
     
     
 % 
@@ -91,7 +99,7 @@ g =9.81;
 %     plot(sol.x,rad2deg(th2_vals))
 %     xlabel('Time (s)'); ylabel('Theta (deg)'); legend({'th1','th2'});
 
-    animateSol(sol,p)
+    %animateSol(sol,p)
 end
 
 function tau = control_law(t,z,p)
