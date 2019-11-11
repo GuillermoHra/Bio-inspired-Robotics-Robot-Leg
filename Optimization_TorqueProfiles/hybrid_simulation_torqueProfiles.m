@@ -80,7 +80,7 @@ function [dz, Fc] = dynamics_continuous(t,z,ctrl,p,iphase)
        C = position_foot(z,p); %y
        if C(2) <= 0  
         dC= velocity_foot(z,p); %dy
-        Fc = -5000 * C(2) - 30*dC(2);
+        Fc = -8000 * C(2) - 120*dC(2);
         if Fc < 0
             Fc = 0;
         end

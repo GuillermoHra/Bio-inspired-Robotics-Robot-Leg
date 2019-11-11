@@ -20,8 +20,8 @@ z0 = [.5; thki;thai; 0; 0;0; 0]; %y, thk, tha, vy, vk, va ,uank^2               
 % set guess
 tf = .5;                                        % simulation final time
                                 % control time points
-ctrl.T = [0 -.14 -.20 0 -.08 -.12];       % -.204  -.1272     control values
-ctrl.dur = 0.3;
+ctrl.T = [ -1 -1.6 -2.0 -0.7 -1.0 -1.3];       % -.11 -.16 -.20 -.07 -.10 -.13     control values
+ctrl.dur = 0.3; % was: .3 maybe increase it?
 ctrl.land_time = 0;
 
 % % setup and solve nonlinear programming problem
@@ -40,7 +40,7 @@ x = fmincon(problem);                           % solve nonlinear programming pr
 % re-define tf, tfc, and ctrl here to reflect your solution.
 
 tf = x(1);                                        % simulation final time
-                                  % control time points
+% control time points
 ctrl.T = [x(2) x(3) x(4) x(5) x(6) x(7)];                               % control values
 [t, z, u, indices, sols, land_time, fc] = hybrid_simulation_torqueProfiles(z0,ctrl,p,[0 tf]); % run simulation
 

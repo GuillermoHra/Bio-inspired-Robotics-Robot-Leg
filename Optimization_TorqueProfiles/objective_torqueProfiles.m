@@ -40,7 +40,9 @@ ctrl.land_time = 0;
     %ddt = @(r) jacobian(r,[q;dq])*[dq;ddq]; 
 
 %f=z(7,end);
-f = -y(end);  % was: (-) negative of COM height
+f = -y(end);  % negative of COM height
 %f = y_foot(end); % foot y position
 % maximize u2
+%f = -z(7,end);
+
 end

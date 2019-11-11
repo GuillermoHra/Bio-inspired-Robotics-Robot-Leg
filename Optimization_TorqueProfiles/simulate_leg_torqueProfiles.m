@@ -52,35 +52,35 @@ g =9.81;
     %figure;
     %plot(sol.x,E);xlabel('Time (s)'); ylabel('Energy (J)');
     
-    % plot torque profiles
-    figure;
-    subplot(2,1,1)
-    plot(sol.x, Tknee, 'LineWidth', 2.5);
-    hold on
-    plot(sol.x, Tankle, 'LineWidth', 2.5);
-    %plot(sol.x, contact_F*-1, 'LineWidth', 1.5);
-    xlabel('Time (s)'); ylabel('Torque')
-    legend('Torque Knee', 'Torque Ankle')
-    hold off
-    subplot(2,1,2)
-    plot(sol.x, th1_vals);
-    hold on
-    plot(sol.x, th2_vals);
-    plot(sol.x, ones(length(sol.x))*thki);
-    plot(sol.x, ones(length(sol.x))*thai);
-    xlabel('Time (s)'); ylabel('Angle')
-    legend('Angle Knee', 'Angle Ankle')
-    
-     % compute foot position over time
-    rE = zeros(3,length(sol.x));
-    for i = 1:length(sol.x)
-        rE(:,i) = position_foot(sol.y(:,i),p);
-    end
-    figure;
-    plot(sol.x,rE(1:2,:))
-    hold on
-    plot(sol.x, y_vals); % COM height
-    xlabel('Time (s)'); ylabel('Position (m)'); legend({'x','y', 'COM'});
+%     % plot torque profiles
+%     figure;
+%     subplot(2,1,1)
+%     plot(sol.x, Tknee, 'LineWidth', 2.5);
+%     hold on
+%     plot(sol.x, Tankle, 'LineWidth', 2.5);
+%     %plot(sol.x, contact_F*-1, 'LineWidth', 1.5);
+%     xlabel('Time (s)'); ylabel('Torque')
+%     legend('Torque Knee', 'Torque Ankle')
+%     hold off
+%     subplot(2,1,2)
+%     plot(sol.x, th1_vals);
+%     hold on
+%     plot(sol.x, th2_vals);
+%     plot(sol.x, ones(length(sol.x))*thki);
+%     plot(sol.x, ones(length(sol.x))*thai);
+%     xlabel('Time (s)'); ylabel('Angle')
+%     legend('Angle Knee', 'Angle Ankle')
+%     
+%      % compute foot position over time
+%     rE = zeros(3,length(sol.x));
+%     for i = 1:length(sol.x)
+%         rE(:,i) = position_foot(sol.y(:,i),p);
+%     end
+%     figure;
+%     plot(sol.x,rE(1:2,:))
+%     hold on
+%     plot(sol.x, y_vals); % COM height
+%     xlabel('Time (s)'); ylabel('Position (m)'); legend({'x','y', 'COM'});
     
     
     
@@ -91,7 +91,7 @@ g =9.81;
 %     plot(sol.x,rad2deg(th2_vals))
 %     xlabel('Time (s)'); ylabel('Theta (deg)'); legend({'th1','th2'});
 
-    %animateSol(sol,p)
+    animateSol(sol,p)
 end
 
 function tau = control_law(t,z,p)
@@ -108,9 +108,9 @@ function tau = control_law(t,z,p)
      thkvc=z(5);%theta knee velocity current
      thavc=z(6);%theta ankle velocity current
      %size(z)
-     KKnee = 80; % 10
+     KKnee = 120; % 10
      DKnee = 2; % 2
-     KAnkle = 50; % 50
+     KAnkle = 80; % 50
      DAnkle = 2; % 5
      tau = [ -(KKnee*(thkc-thkd)+ DKnee*(thkvc)) ; -(KAnkle*(thac-thad)+ DAnkle*(thavc)) ]; %WATCH FOR OVERDAMPING
      % tau = [0; -(500*(thac-thad)+ 5*(thavc))  ];
@@ -121,8 +121,8 @@ function tau = control_law(t,z,p)
 function Fc = contact_force(z,p)
 
     % Fixed parameters for contact
-    K_c1 = 5000; % was: 1000       TODO: is it OK if the foot goes below zero??
-    D_c1 = 30; % was: 20
+    K_c1 = 8000; % was: 1000       TODO: is it OK if the foot goes below zero??
+    D_c1 = 120; % was: 20
     %dC1  = deg2rad(0);
     
     r_E = position_foot(z, p);

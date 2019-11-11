@@ -41,7 +41,7 @@ th_k=z(2,:);
 th_a=z(3,:);
 sums=th_h-th_k+th_a;
 %cineq = [-min(sums), max(sums)-pi/2];
-cineq=[max(th_a)-pi/2]; %[-min(th_a), -min(th_k) ,max(th_k)-pi/2, -min(th_a), max(th_a)-pi/2, -min(th_k), -min(sums), max(sums)-pi/2 ];                    
+cineq=[-min(th_a), max(th_a)-3/4*pi, min(th_k)+3/2*pi, max(th_k), -y_foot(end)]; %[-min(th_a), -min(th_k) ,max(th_k)-pi/2, -min(th_a), max(th_a)-pi/2, -min(th_k), -min(sums), max(sums)-pi/2 ];                    
 % -y_foot(end)+.01, -y(end)+.01
 %ceq = [ctrl.tf-t_takeoff , COM(4,end) ];                                                                                                       
 % simply comment out any alternate constraints when not in use
