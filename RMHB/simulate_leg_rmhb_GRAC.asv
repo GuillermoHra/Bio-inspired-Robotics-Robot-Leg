@@ -1,4 +1,4 @@
-function [ sol] = simulate_leg_rmhb_GRAC(z0,ctrl,p,tspan)
+function [ sol,uout] = simulate_leg_rmhb_GRAC(z0,ctrl,p,tspan)
 
 close all
 addpath([pwd '/AutoDerived'])
@@ -34,11 +34,16 @@ g =9.81;
 
     %z0 = [.5; thki;thai; 0; 0;0]; %y, theta knee, theta ankle
     opts = odeset('AbsTol',1e-8,'RelTol',1e-6);
+    uout=[];
     sol = ode45(@dynamics,tspan,z0,opts,p,z0,ctrl);
+   
     sol.k=ctrl;
     y_vals=sol.y(1,:);
     th1_vals=sol.y(2,:);
     th2_vals=sol.y(3,:);
+   
+    
+         uout=[uout control_law(sol.x,sol.y,p,z0,ctrl)];
    
     
 end
@@ -53,20 +58,19 @@ function tau = control_law(t,z,p,z0,ctrl)
     
       thkd=thki;  %theta knee desired
       thad=thai;    %theta ankle desired
-      thkc=z(2); %theta knee current
-      thac=z(3); %theta ankle current
-      thkvc=z(5);%theta knee velocity current
-      thavc=z(6);%theta ankle velocity current
+      thkc=z(2,:); %theta knee current
+      thac=z(3,:); %theta ankle current
+      thkvc=z(5,:);%theta knee velocity current
+      thavc=z(6,:);%theta ankle velocity current
       %size(z)
-      if len(ctrl)!=4
-          
+
       kk=ctrl(1);
       bk=ctrl(2);
       ka=ctrl(3);
       ba=ctrl(4);
-      tau = [-(kk*(thkc-thkd)+ .2*(thkvc)) ; -(50*(thac-thad)+ 5*(thavc))  ]; %WATCH FOR OVERDAMPING
-      KSEA=100;
-      tau(2)=tau(2) + KSEA*(z0(3)-z(3));
+      tau = [-(kk*(thkc-thkd)+ bk*(thkvc)) ; -(ka*(thac-thad)+ ba*(thavc))  ]; %WATCH FOR OVERDAMPING
+      %KSEA=100;
+      %tau(2,:)=tau(2,:) + KSEA*(z0(3)-z(3));
       % tau = [0; -(500*(thac-thad)+ 5*(thavc))  ];
    
          %tau=[0;0];
@@ -121,10 +125,7 @@ function dz = dynamics(t,z,p,z0,ctrl)
     b = b_GRAC_leg(z,tau,Fc,p);
   
     QFc= [0 ; 0; Fc];
-    
-    
-
-    
+        
     % Solve for qdd.
 
     qdd = A\(b+QFc);

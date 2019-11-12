@@ -24,12 +24,12 @@ function f = objective(x,z0,p,tspan)
 ctrl = [x(1) x(2) x(3) x(4)]; 
 
 
- [ sol]=simulate_leg_rmhb_GRAC(z0,ctrl,p,tspan);
+ [ sol,uout]=simulate_leg_rmhb_GRAC(z0,ctrl,p,tspan);
 
     %[t, kout,zout, sols, fc] = hybrid_simulation_GRAC(z0,ctrl,p,[0 tf]);
     z=sol.y;
     COM = COM_GRAC_leg(z,p);
-    y=COM(1,:);
+    ycom=COM(1,:);
 
-f=y(end);
+f=max(abs(diff(diff(diff(ycom)))));
 end

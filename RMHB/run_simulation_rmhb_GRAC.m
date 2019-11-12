@@ -16,13 +16,13 @@ z0 = [.5; p(20);p(21); 0; 0;0; 0]; %y, thk, tha, vy, vk, va ,uank^2             
 % set guess
 tspan=[0 1];                                       % simulation final time
                                 % control time points
-ctrl = [1,.1,1,.1];% 10 100 10];                               % control values
+ctrl = [100,10,100,10];% 10 100 10];                               % control values
 
 %%
 % % setup and solve nonlinear programming problem
 problem.objective = @(x) objective_rmhb(x,z0,p,tspan);     % create anonymous function that returns objective
 problem.nonlcon = @(x) constraints_rmhb(x,z0,p,tspan);     % create anonymous function that returns nonlinear constraints
-problem.x0 = [1,.1,1,.1];                   % initial guess for decision variables
+problem.x0 = ctrl;                   % initial guess for decision variables
 problem.lb = [ 0*ones(size(ctrl))];     % lower bound on decision variables
 problem.ub = [  1000*ones(size(ctrl))];     % upper bound on decision variables
 problem.Aineq = []; problem.bineq = [];         % no linear inequality constraints
@@ -39,7 +39,7 @@ x = fmincon(problem);                           % solve nonlinear programming pr
 ctrl = [x(1) x(2) x(3) x(4)];   
 %ctrl.T = [x(2) ];  % control values
 %%
- sol=simulate_leg_rmhb_GRAC(z0,ctrl,p,tspan);
+ [sol,uout]=simulate_leg_rmhb_GRAC(z0,ctrl,p,tspan);
 %[t, kout,z, sols, fc] = hybrid_simulation_GRAC(z0,ctrl,p,tspan); % run simulation
 t=sol.x;
 z=sol.y;

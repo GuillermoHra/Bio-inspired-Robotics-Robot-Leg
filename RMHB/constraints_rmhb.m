@@ -25,21 +25,26 @@ function [cineq ceq] = constraints_rmhb(x,z0,p,tspan)
 ctrl = [x(1) x(2) x(3) x(4)];
 
 %[t, z, u, indices] = hybrid_simulation_GRAC(z0,ctrl,p,[0 tf]);
-[sol]= simulate_leg_rmhb_GRAC(z0,ctrl,p,tspan);
+[sol,uout]= simulate_leg_rmhb_GRAC(z0,ctrl,p,tspan);
 %[t, kout,zout, sols, fc] = hybrid_simulation_GRAC(z0,ctrl,p,[0 tf]);
 %t_landing=t(indices(1));
  z=sol.y;
 theta=z(3,:);
 COM = COM_GRAC_leg(z,p);
 y=COM(1,:);
-
+%r_E= position_foot(z, p);
 th_h=p(2);
 th_k=z(2,:);
 th_a=z(3,:);
 sums=th_h-th_k+th_a;
+
+Tthk_max=max(abs(uout(1,:)));
+Ttha_max=max(abs(uout(2,:)));
    % cineq = [-min(sums), max(sums)-pi/2];
     %cineq=[-min(th_a), max(th_a)-pi/2];%[-min(theta) ,max(theta)-pi/2 ];                    
-cineq=[];
+cineq=[Tthk_max-2.1; Ttha_max-2.1;-min(sums);max(sums)-pi/2; -min(th_k); max(th_k)-3*pi/2];
+
+
  %   ceq = [ctrl.tf-t_takeoff , COM(4,end) ];                                            
                                                             
 % simply comment out any alternate constraints when not in use

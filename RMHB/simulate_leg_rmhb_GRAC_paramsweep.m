@@ -1,33 +1,14 @@
-function [ sol,uout] = simulate_leg_rmhb_GRAC(z0,ctrl,p,tspan)
+function [ sol,uout] = simulate_leg_rmhb_GRAC_paramsweep(z0,ctrl,p,tspan)
 
 close all
 addpath([pwd '/AutoDerived'])
  %% Definte fixed paramters (obtained from CAD)
-% p=[thh0;thh; m1; I1; m2 ;I2; m3 ;I3; m4; I4; l1; l2; l3 ;l4;lc2;lc3;lc4;lh0; g ]; %parameters
-thh0=deg2rad(15);
-thh=deg2rad(45);
-m1=.5;
-I1= 50*10^-6;
-m2=.1;
-I2= 10*10^-6;
-m3=.1;
-I3= 10*10^-6;
-m4=.05;
-I4= 5*10^-6;
-
-l1=.05;
-l2=.15;
-l3=.15 ;
-l4=.075;
-lc2=l2/2;
-lc3=l3/2;
-lc4=l4/2;
-lh0=.03;
-g =9.81;
-    thki=p(20);
-    thai=p(21);
+% p=[thh0;thh; m1; I1; m2 ;I2; m3 ;I3; m4; I4; l1; l2; l3 ;l4;lc2;lc3;lc4;lh0; g ];p=[thh0;thh; m1; I1; m2 ;I2; m3 ;I3; m4; I4; l1; l2; l3 ;l4;lc2;lc3;lc4;lh0; g ;thki;thai]; %parameters
+thh0=p(1); thh=p(2); m1=p(3); I1= p(4); m2=p(5); I2= p(6); m3=p(7); I3= p(8); m4=p(9); I4= p(10);
+l1=p(11); l2=p(12); l3=p(13); l4=p(14); lc2=p(15); lc3=p(16); lc4=p(17); lh0=p(18); g =p(19); 
+thki=p(20); thai=p(21);
     %% Parameter vector make sure this matches Derive_everything_GRAC.m
-    p=[thh0;thh; m1; I1; m2 ;I2; m3 ;I3; m4; I4; l1; l2; l3 ;l4;lc2;lc3;lc4;lh0; g ;thki;thai]; %parameters
+    %p=[thh0;thh; m1; I1; m2 ;I2; m3 ;I3; m4; I4; l1; l2; l3 ;l4;lc2;lc3;lc4;lh0; g ;thki;thai]; %parameters
 %p=[thh0;thh; m1; I1; m2 ;I2; m3 ;I3; m4; I4; l1; l2; l3 ;l4;lc2;lc3;lc4;lh0; g ]; %parameters
      %% Perform Dynamic simulation
     
@@ -37,13 +18,8 @@ g =9.81;
     uout=[];
     sol = ode45(@dynamics,tspan,z0,opts,p,z0,ctrl);
    
-    sol.k=ctrl;
-    y_vals=sol.y(1,:);
-    th1_vals=sol.y(2,:);
-    th2_vals=sol.y(3,:);
-   
-    
-         uout=[uout control_law(sol.x,sol.y,p,z0,ctrl)];
+    sol.k=ctrl;   
+    uout=[uout control_law(sol.x,sol.y,p,z0,ctrl)];
    
     
 end
@@ -54,7 +30,7 @@ function tau = control_law(t,z,p,z0,ctrl)
         
      %desired angles of leg
          thki=p(20);   %MAKE SURE THESE MATCH AT THE TOP
-    thai=p(21);
+       thai=p(21);
     
       thkd=thki;  %theta knee desired
       thad=thai;    %theta ankle desired
@@ -70,8 +46,8 @@ function tau = control_law(t,z,p,z0,ctrl)
       ba=ctrl(4);
 
       tau = [-(kk*(thkc-thkd)+ bk*(thkvc)) ; -(ka*(thac-thad)+ ba*(thavc))  ]; %WATCH FOR OVERDAMPING
-      tau(tau>2) = 2;
-      tau(tau<-2) = -2;
+     %tau(tau>2) = 2;
+     % tau(tau<-2) = -2;
       %KSEA=100;
       %tau(2,:)=tau(2,:) + KSEA*(z0(3)-z(3));
       % tau = [0; -(500*(thac-thad)+ 5*(thavc))  ];
@@ -109,14 +85,7 @@ function dz = dynamics(t,z,p,z0,ctrl)
     y = z(1);     th1 = z(2);     th2 = z(3);
    yd= z(4);     th1d= z(5);     th2d = z(6);
     
-    
-  
-    
-    %----------------------------
-    %WHAT WE NEED IS TO FIGURE OUT HOW TO SIMULATE THM vs TH2 (they are
-    %different) 
-    %----------------------------------------
-    
+         
     % Get mass matrix
     A = A_GRAC_leg(z,p);
     
