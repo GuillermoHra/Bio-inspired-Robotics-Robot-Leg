@@ -16,4 +16,4 @@ thk = in1(2,:);
 y = in1(1,:);
 t2 = tha+thh-thk;
 t3 = thh-thk;
-re = [l3.*sin(t3)+l4.*sin(t2)+l2.*sin(thh)+lh0.*sin(thh0); y-l3.*cos(t3)-l4.*cos(t2)-l2.*cos(thh)-lh0.*cos(thh0); 0.0];
+re = [l3.*sin(t3)+l4.*sin(t2)+l2.*sin(thh)+lh0.*sin(thh0); y-l3.*cos(t3)-l4.*cos(t2)-l2.*cos(thh)-lh0.*cos(thh0)];

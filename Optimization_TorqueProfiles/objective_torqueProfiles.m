@@ -24,26 +24,27 @@ function f = objective(x,z0,p)
 %x=[tf, tfctrl, T1, T2]
 tf=x(1);
 %ctrl.tf = x(2);                                  % control time points
-ctrl.T = [x(2) x(3) x(4) x(5) x(6) x(6)]; 
+ctrl.T = [x(2) x(3) x(4) x(5)]; 
 ctrl.dur = 0.3;
 ctrl.land_time = 0;
 
-    [t, z, u, indices, sols, land_time, fc] = hybrid_simulation_torqueProfiles(z0,ctrl,p,[0 tf]);
+    [t, z, u, indices, sols, land_time, fc, angError] = hybrid_simulation_torqueProfiles(z0,ctrl,p,[0 tf]);
     COM = COM_GRAC_leg(z,p);
     y = COM(1,:);
     
-    foot_pos = position_foot(z, p);
-    y_foot = foot_pos(2,:);
+    %foot_pos = position_foot(z, p);
+    %y_foot = foot_pos(2,:);
     
     % alternate objective functions:
     %f = x(1);                         
     %ddt = @(r) jacobian(r,[q;dq])*[dq;ddq]; 
 
 %f=z(7,end);
-f = -y(end);  % negative of COM height
+%f = -y(end);  % negative of COM height
 %f = y_foot(end); % foot y position
 % maximize u2
 %f = -z(7,end);
-%f = max(abs(diff(diff(diff(y)))));
+f = max(abs(diff(diff(diff(y))))); % jerk
 % try also error of impedance controller
+%f = abs(angError(end)); % minimize error
 end

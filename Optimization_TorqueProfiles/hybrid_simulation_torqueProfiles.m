@@ -1,4 +1,4 @@
-function [tout, zout, uout, indices, sols, land_time, Fout] = hybrid_simulation(z0,ctrl,p,tspan)
+function [tout, zout, uout, indices, sols, land_time, Fout, angError] = hybrid_simulation(z0,ctrl,p,tspan)
 path = 'C:\Users\Usuario\Documents\MATLAB\Bio-inspired Robotics\Final Project Landing Robot\Bio-inspired-Robotics-Robot-Leg';
 addpath([path '\AutoDerived'])
 %Inputs:
@@ -53,7 +53,7 @@ addpath([path '\AutoDerived'])
     end
 
     % assemble the results from each solution structure in the array
-    tout = []; zout = []; uout = []; indices = []; Fout=[];
+    tout = []; zout = []; uout = []; indices = []; Fout=[]; angError=[];
     for ii = 1:length(sols)
         sol = sols(ii);                                     % get the next solution structure
         iphase = sol.iphase;                                % get the phase number
@@ -63,6 +63,7 @@ addpath([path '\AutoDerived'])
         uout = [uout control_laws(sol.x,sol.y,ctrl,p,iphase)];   % append controls
         Fout = [Fout contact_force(sol.x,sol.y,ctrl,p,iphase)];   % append contact force
         indices = [indices length(tout)];                   % append indices at which phases end
+        angError = [angError angle_error(sol.y)];
     end
 
 end
@@ -71,8 +72,6 @@ end
 function [dz, Fc] = dynamics_continuous(t,z,ctrl,p,iphase)
 
     u = control_laws(t,z,ctrl,p,iphase);  % get controls at this instant
-
-   
     % Contact model
     %if iphase == 2  % in flight phase
        %Fc = 0;
@@ -96,36 +95,38 @@ function [dz, Fc] = dynamics_continuous(t,z,ctrl,p,iphase)
     dz(1:3,1) = z(4:6); % assign velocities to time derivative of state vector
     dz(4:6,1) = x(1:3);   % assign accelerations to time derivative of state vector
     
-
     dz(7) = sum(u.^2); %1              % change to integrate torque squared
 end
 
 %% Control
 function u = control_laws(t,z,ctrl,p,iphase)
 
+    thk = z(2,:);            % leg angle
+    dthk = z(5,:);           % leg angular velocity
+    tha = z(3,:);            % leg angle
+    dtha = z(6,:);           % leg angular velocity
+
+    thkd = deg2rad(90);             % desired leg angle
+    thad = deg2rad(75);             % desired leg angle
+
     if iphase == 1
         t_ctrl = t - ctrl.land_time;
-        ctrl.t = linspace(0,ctrl.dur,length(ctrl.T(1:3)));
-        u1 = interp1(ctrl.t,ctrl.T(1:3),t_ctrl,'linear','extrap');
-        u2 = interp1(ctrl.t,ctrl.T(4:6),t_ctrl,'linear','extrap');
+        ctrl.t = linspace(0,ctrl.dur,length(ctrl.T(1:2)));
+        u1 = interp1(ctrl.t,ctrl.T(1:2),t_ctrl,'linear','extrap');
+        u2 = interp1(ctrl.t,ctrl.T(3:4),t_ctrl,'linear','extrap');
         u=[u1;u2];
         
     else
         %falling
         % PD Control in flight
-        thk = z(2,:);            % leg angle
-        dthk = z(5,:);           % leg angular velocity
-        tha = z(3,:);            % leg angle
-        dtha = z(6,:);           % leg angular velocity
-
-        thkd = deg2rad(90);             % desired leg angle
-        thad = deg2rad(75);             % desired leg angle
         k = 10;                  % stiffness (N/rad)
         b = .5;                  % damping (N/(rad/s))
 
         u1 = -k*(thk-thkd) - b*dthk;% apply PD control
         u2 = -k*(tha-thad) - b*dtha;
         u=[u1;u2];
+        
+        
     end
 end
 
@@ -147,6 +148,17 @@ Fct=[];
            Fct=[Fct Fc];
         end
                 % change to integrate torque squared
+end
+
+function ang_error = angle_error(z)
+    thk = z(2,:);            % leg angle
+    tha = z(3,:);            % leg angle
+    thkd = deg2rad(90);             % desired leg angle
+    thad = deg2rad(75);             % desired leg angle
+    
+
+    ang_error = (thad-tha); % + (thk-thkd) 
+   
 end
 
 

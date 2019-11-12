@@ -33,42 +33,15 @@ g =9.81;
     tspan = [0 .5];
     thki=deg2rad(90);
     thai=deg2rad(75);
-    z0 = [.5; thki; thai; 0; 0; 0; 0; 0; 0];
+    z0 = [.5; thki; thai; 0; 0; 0];
     opts = odeset('AbsTol',1e-8,'RelTol',1e-6);
     sol = ode45(@dynamics,tspan,z0,opts,p);
-    
-    y_vals=sol.y(1,:);
-    th1_vals=sol.y(2,:);
-    th2_vals=sol.y(3,:);
-    %thm_vals=sol.y(7,:);
+ 
     %% Compute Energy
-    E = energy_GRAC_leg(sol.y,p);
+    %E = energy_GRAC_leg(sol.y,p);
     %figure;
     %plot(sol.x,E);xlabel('Time (s)'); ylabel('Energy (J)');
     
-%     %% added to plot torque profiles for impedance controller
-%     Tknee = sol.y(7,:);
-%     Tankle = sol.y(8,:);
-%     contact_F = sol.y(9, :);
-%     % plot torque profiles
-%     figure;
-%     subplot(2,1,1)
-%     plot(sol.x, Tknee, 'LineWidth', 2.5);
-%     hold on
-%     plot(sol.x, Tankle, 'LineWidth', 2.5);
-%     %plot(sol.x, contact_F*-1, 'LineWidth', 1.5);
-%     xlabel('Time (s)'); ylabel('Torque')
-%     legend('Torque Knee', 'Torque Ankle')
-%     hold off
-%     subplot(2,1,2)
-%     plot(sol.x, th1_vals);
-%     hold on
-%     plot(sol.x, th2_vals);
-%     plot(sol.x, ones(length(sol.x))*thki);
-%     plot(sol.x, ones(length(sol.x))*thai);
-%     xlabel('Time (s)'); ylabel('Angle')
-%     legend('Angle Knee', 'Angle Ankle')
-%     
 %      % compute foot position over time
 %     rE = zeros(3,length(sol.x));
 %     for i = 1:length(sol.x)
@@ -80,17 +53,40 @@ g =9.81;
 %     plot(sol.x, y_vals); % COM height
 %     xlabel('Time (s)'); ylabel('Position (m)'); legend({'x','y', 'COM'});
     
-%     tout = []; zout = []; uout = []; Fout=[];
-%     for ii = 1:length(sol)
-%         sol = sol(ii);                                     % get the next solution structure
-%         tout = [tout sol.x];                                % append time points
-%         zout = [zout sol.y];                                % append states
-%         uout = [uout control_laws(sol.y,p)];   % append controls
-%         Fout = [Fout contact_force(sol.y,p)];   % append contact force
-%     end
 
-    uout = control_law(sol.x, sol.y, p)
+
+% Plot torque profiles
+
+    torques = [];
+    Fc = [];
+    for i=1 : length(sol.y)
+        t = sol.x(1,i);
+        z = sol.y(:,i);
+        uout = control_law(t, z, p);
+        torques = [torques ; uout'];
+        Fcout = contact_force(z, p);
+        Fc = [Fc ; Fcout];
+    end
+    figure
+    plot(sol.x, torques(:,1), 'LineWidth', 2);
+    hold on
+    plot(sol.x, torques(:,2), 'LineWidth', 2);
+    legend('Knee', 'Ankle')
+    xlabel('Time (s)')
+    ylabel ('Torque')
     
+    figure
+    subplot(2,1,1)
+    plot(sol.x, Fc);
+    xlabel('Time (s)')
+    ylabel ('Force')
+    subplot(2,1,2)
+    plot(sol.x, sol.y(2,:))
+    hold on
+    plot(sol.x, sol.y(3,:))
+    legend('Knee', 'Ankle')
+    xlabel('Time (s)')
+    ylabel ('Angle')
     
 % 
 %     figure(5); clf;
@@ -129,8 +125,8 @@ function tau = control_law(t,z,p)
 function Fc = contact_force(z,p)
 
     % Fixed parameters for contact
-    K_c1 = 8000; % was: 1000       TODO: is it OK if the foot goes below zero??
-    D_c1 = 120; % was: 20
+    K_c1 = 8000; % was: 1000, 8000       TODO: is it OK if the foot goes below zero??
+    D_c1 = 120; % was: 20, 120
     %dC1  = deg2rad(0);
     
     r_E = position_foot(z, p);
@@ -157,7 +153,6 @@ end
 function dz = dynamics(t,z,p)
     y = z(1);     th1 = z(2);     th2 = z(3);
     yd= z(4);     th1d= z(5);     th2d = z(6);
-    thm=z(7);     thmd=z(8);
     
     bm=3;
     ksea=10; %sea
@@ -171,9 +166,9 @@ function dz = dynamics(t,z,p)
     tau = control_law(t,z,p);
     Fc=contact_force(z,p);
     
-    taucl=tau(2);
+    %taucl=tau(2);
     %get thmdd    
-    thmdd=((taucl-bm*thmd-ksea*(thm-th2)))/Im;
+    %thmdd=((taucl-bm*thmd-ksea*(thm-th2)))/Im;
     %thmdd=0;
     %tau(2)=ksea*(th2-thm);
     
@@ -181,7 +176,7 @@ function dz = dynamics(t,z,p)
     A = A_GRAC_leg(z,p);
     b = b_GRAC_leg(z,tau,Fc,p);
   
-    QFc = [0 ; 0; Fc]; % TODO: IS IT NEEDED??
+    QFc = [0 ; 0; Fc]; % TODO: IS IT NEEDED?? NO
     % Solve for qdd.
     qdd = A\(b); % was: A\(b+QFc)
     %dz = 0*z;
@@ -190,9 +185,9 @@ function dz = dynamics(t,z,p)
     dz(1:3,1) = z(4:6);
     dz(4:6,1) = qdd(1:3);
     %dz(7:8)=[thmd; thmdd];
-    dz(7:8,1) = tau;
+    %dz(7:8,1) = tau;
     % return Fc as well
-    dz(9,1) = Fc;
+    %dz(9,1) = Fc;
 end
 
 
@@ -217,7 +212,7 @@ function animateSol(sol,p)
     for t = 0:.01:sol.x(end)
             th1_vals=sol.y(2,:);
             th2_vals=sol.y(3,:);
-            thm_vals=sol.y(7,:);
+            %thm_vals=sol.y(7,:);
         % interpolate to get state at current time.
         z = interp1(sol.x',sol.y',t)';
         %keypoints = [rcm1 rh0 rk ra re];
@@ -250,9 +245,9 @@ function animateSol(sol,p)
         jhat = [0; 1; 0];
         khat = cross(ihat,jhat);
         
-       % ermhat =  sin(z(7)-z(2)+thh)*ihat + -cos(z(7)-z(2)+thh) * jhat;
-        ermhat =  sin(0-z(2)+thh)*ihat + -cos(0-z(2)+thh) * jhat;
-        r_m= r_a+.02*ermhat;
+        %ermhat =  sin(z(7)-z(2)+thh)*ihat + -cos(z(7)-z(2)+thh) * jhat;
+        %ermhat =  sin(0-z(2)+thh)*ihat + -cos(0-z(2)+thh) * jhat;
+        %r_m= r_a+.02*ermhat;
         %set(h_tm,'XData',[r_a(1) r_m(1)]);
         %set(h_tm,'YData',[r_a(2) r_m(2)]);
         
