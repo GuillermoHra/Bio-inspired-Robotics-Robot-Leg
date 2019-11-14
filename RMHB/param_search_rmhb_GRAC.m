@@ -14,7 +14,7 @@ p = parameters();                           % get parameters from file
 z0 = [.55; p(20);p(21); 0; 0;0; 0]; %y, thk, tha, vy, vk, va ,uank^2                % set initial state
 
 % set guess
-tspan=[0 .5];                                       % simulation final time
+tspan=[0 .75];                                       % simulation final time
  %% 
 n=15; %number of values to test for each control var
 Kk=linspace(.1,200,n);
@@ -36,7 +36,7 @@ for i=1:k
     %toc
    % animate_param_sweep(sol,p, .1)
     
-    validflag=check_constraints_rmhb(sol,p);
+    validflag=check_constraints_rmhb(sol,p, uout);
     if validflag==1
         maxj=get_max_jerk_rmhb(sol,p);
         valid_configs=[valid_configs; ctrl maxj];
@@ -50,6 +50,20 @@ toc
     close all
     figure
     plot(valid_configs(:,end),'k*')
+    
+    figure
+    X = valid_configs(:,1);
+    Y = valid_configs(:,2);
+    Z = valid_configs(:,5);
+    plot3(X, Y, Z, '*');
+    title('Knee')
+    
+    figure
+    X = valid_configs(:,3);
+    Y = valid_configs(:,4);
+    Z = valid_configs(:,5);
+    plot3(X, Y, Z, '*');
+    title('Ankle')
     %%
     [val, idx]=min(abs(valid_configs(:,end)));
     ctrl_opt=valid_configs(idx,1:4);
@@ -68,7 +82,7 @@ toc
     
                              
     %%     
-       p = parameters();    
+    p = parameters();    
     [sol,uout]=simulate_leg_rmhb_GRAC_paramsweep( z0,[0   0.000   10000    0.000],p,tspan);
     animate_param_sweep(sol,p,.1)
 
