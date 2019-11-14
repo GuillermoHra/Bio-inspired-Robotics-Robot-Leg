@@ -46,8 +46,8 @@ function tau = control_law(t,z,p,z0,ctrl)
       ba=ctrl(4);
 
       tau = [-(kk*(thkc-thkd)+ bk*(thkvc)) ; -(ka*(thac-thad)+ ba*(thavc))  ]; %WATCH FOR OVERDAMPING
-     %tau(tau>2) = 2;
-     % tau(tau<-2) = -2;
+     tau(tau>2) = 2;
+     tau(tau<-2) = -2;
       %KSEA=100;
       %tau(2,:)=tau(2,:) + KSEA*(z0(3)-z(3));
       % tau = [0; -(500*(thac-thad)+ 5*(thavc))  ];

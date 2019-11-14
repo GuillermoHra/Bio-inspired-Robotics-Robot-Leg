@@ -25,6 +25,7 @@ Ba=linspace(.1,50,n);
 combs_to_check=allcomb(Kk,Bk,Ka,Ba);
 k=length(combs_to_check);
 valid_configs=[];
+not_valid_configs=[];
 tic
 for i=1:k
     i
@@ -39,6 +40,8 @@ for i=1:k
     if validflag==1
         maxj=get_max_jerk_rmhb(sol,p);
         valid_configs=[valid_configs; ctrl maxj];
+    else
+        not_valid_configs=[valid_configs; ctrl maxj];
     end
 end
 disp('total time')
@@ -48,9 +51,21 @@ toc
     figure
     plot(valid_configs(:,end),'k*')
     %%
+    [val, idx]=min(abs(valid_configs(:,end)));
+    ctrl_opt=valid_configs(idx,1:4);
+    [sol,uout]=simulate_leg_rmhb_GRAC_paramsweep(z0,ctrl_opt,p,tspan);
+    animate_param_sweep(sol,p,.1)
     
-                             % control values
-
+    %%
+    [val, idx]=max(abs(valid_configs(:,end)));
+    ctrl_nopt=valid_configs(idx,1:4);
+    [sol,uout]=simulate_leg_rmhb_GRAC_paramsweep(z0,ctrl_nopt,p,tspan);
+    animate_param_sweep(sol,p,.1)
+                             
+    %%     
+        
+    [sol,uout]=simulate_leg_rmhb_GRAC_paramsweep(z0,[500,50,500,50],p,tspan);
+    animate_param_sweep(sol,p,.1)
 
 %%
  [sol,uout]=simulate_leg_rmhb_GRAC(z0,ctrl,p,tspan);
