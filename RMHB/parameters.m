@@ -19,7 +19,7 @@ lc3=l3/4;
 lc4=l4/2;
 lh0=.03;
 g =9.81;
-    thki=deg2rad(90);
+    thki=deg2rad(75);
     thai=deg2rad(75);
   p=[thh0;thh; m1; I1; m2 ;I2; m3 ;I3; m4; I4; l1; l2; l3 ;l4;lc2;lc3;lc4;lh0; g ;thki;thai];
 end

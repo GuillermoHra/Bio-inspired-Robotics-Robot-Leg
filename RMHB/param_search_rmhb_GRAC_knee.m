@@ -11,18 +11,18 @@ clear all; close all; clc;
 addpath([pwd '/AutoDerived'])
 p = parameters();                           % get parameters from file
 
-z0 = [.55; p(20);p(21); 0; 0;0; 0]; %y, thk, tha, vy, vk, va ,uank^2                % set initial state
+z0 = [.55; p(20);0; 0]; %y, thk, tha, vy, vk, va ,uank^2                % set initial state
 
 % set guess
 tspan=[0 .5];                                       % simulation final time
  %% 
-n=15; %number of values to test for each control var
-Kk=linspace(.1,200,n);
-Bk=linspace(.01,20,n);
-Ka=linspace(.1,200,n);
-Ba=linspace(.01,20,n);
+n=20; %number of values to test for each control var
+Kk=linspace(.1,100,n);
+Bk=linspace(.001,15,n);
+%Ka=linspace(1,500,n);
+%Ba=linspace(.1,50,n);
 
-combs_to_check=allcomb(Kk,Bk,Ka,Ba);
+combs_to_check=allcomb(Kk,Bk);%,Ka,Ba);
 k=length(combs_to_check);
 valid_configs=[];
 not_valid_configs=[];
@@ -32,11 +32,11 @@ for i=1:k
     k
     ctrl=combs_to_check(i,:);
     %tic
-    [sol,uout]=simulate_leg_rmhb_GRAC_paramsweep(z0,ctrl,p,tspan);
+    [sol,uout]=simulate_leg_rmhb_GRAC_paramsweep_knee(z0,ctrl,p,tspan);
     %toc
    % animate_param_sweep(sol,p, .1)
     
-    validflag=check_constraints_rmhb(sol,p);
+    validflag=check_constraints_rmhb_knee(sol,p);
     if validflag==1
         maxj=get_max_jerk_rmhb(sol,p);
         valid_configs=[valid_configs; ctrl maxj];
@@ -52,25 +52,21 @@ toc
     plot(valid_configs(:,end),'k*')
     %%
     [val, idx]=min(abs(valid_configs(:,end)));
-    ctrl_opt=valid_configs(idx,1:4);
-    [sol1,uout1]=simulate_leg_rmhb_GRAC_paramsweep(z0,ctrl_opt,p,tspan);
-    animate_param_sweep(sol1,p,.1)
+    ctrl_opt=valid_configs(idx,1:2);
+    [sol,uout]=simulate_leg_rmhb_GRAC_paramsweep_knee(z0,ctrl_opt,p,tspan);
+    animate_param_sweep_knee(sol,p,.1)
     
     %%
     [val, idx]=max(abs(valid_configs(:,end)));
-    ctrl_nopt=valid_configs(idx,1:4);
-    [sol2,uout2]=simulate_leg_rmhb_GRAC_paramsweep(z0,ctrl_nopt,p,tspan);
-    animate_param_sweep(sol2,p,.1)
-    
-    
-    %%
-    animate_param_sweep_twocompare(sol1,sol2,p,.1)
-    
+    ctrl_nopt=valid_configs(idx,1:2);
+    [sol,uout]=simulate_leg_rmhb_GRAC_paramsweep_knee(z0,ctrl_nopt,p,tspan);
+    animate_param_sweep_knee(sol,p,.1)
                              
     %%     
-       p = parameters();    
-    [sol,uout]=simulate_leg_rmhb_GRAC_paramsweep( z0,[0   0.000   10000    0.000],p,tspan);
-    animate_param_sweep(sol,p,.1)
+        
+    [sol,uout]=simulate_leg_rmhb_GRAC_paramsweep_knee(z0,[2   .1000  ],p,tspan);
+    max(abs(uout))
+    animate_param_sweep_knee(sol,p,.1)
 
 %%
  [sol,uout]=simulate_leg_rmhb_GRAC(z0,ctrl,p,tspan);

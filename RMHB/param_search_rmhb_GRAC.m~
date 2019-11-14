@@ -11,12 +11,12 @@ clear all; close all; clc;
 addpath([pwd '/AutoDerived'])
 p = parameters();                           % get parameters from file
 
-z0 = [.5; p(20);p(21); 0; 0;0; 0]; %y, thk, tha, vy, vk, va ,uank^2                % set initial state
+z0 = [.55; p(20);p(21); 0; 0;0; 0]; %y, thk, tha, vy, vk, va ,uank^2                % set initial state
 
 % set guess
 tspan=[0 .3];                                       % simulation final time
-  
-n=10; %number of values to test for each control var
+ %% 
+n=4; %number of values to test for each control var
 Kk=linspace(1,500,n);
 Bk=linspace(.1,50,n);
 Ka=linspace(1,500,n);
@@ -41,7 +41,7 @@ for i=1:k
         maxj=get_max_jerk_rmhb(sol,p);
         valid_configs=[valid_configs; ctrl maxj];
     else
-        not_valid_configs=[valid_configs; ctrl maxj];
+        not_valid_configs=[not_valid_configs; ctrl];
     end
 end
 disp('total time')
@@ -63,8 +63,9 @@ toc
     animate_param_sweep(sol,p,.1)
                              
     %%     
-     animate_param_sweep(sol,p,.1)
-     
+        
+    [sol,uout]=simulate_leg_rmhb_GRAC_paramsweep(z0,[222.7778    5.000   56.4444    5.000],p,tspan);
+    animate_param_sweep(sol,p,.05)
 
 %%
  [sol,uout]=simulate_leg_rmhb_GRAC(z0,ctrl,p,tspan);
