@@ -51,12 +51,14 @@ toc
     figure
     plot(valid_configs(:,end),'k*')
     %%
+    figure
     [val, idx]=min(abs(valid_configs(:,end)));
     ctrl_opt=valid_configs(idx,1:4);
     [sol1,uout1]=simulate_leg_rmhb_GRAC_paramsweep(z0,ctrl_opt,p,tspan);
     animate_param_sweep(sol1,p,.1)
     
     %%
+    figure
     [val, idx]=max(abs(valid_configs(:,end)));
     ctrl_nopt=valid_configs(idx,1:4);
     [sol2,uout2]=simulate_leg_rmhb_GRAC_paramsweep(z0,ctrl_nopt,p,tspan);
@@ -64,20 +66,22 @@ toc
     
     
     %%
+    figure
     animate_param_sweep_twocompare(sol1,sol2,p,.1)
     
                              
-    %%     
+    %%  
+    figure
        p = parameters();    
     [sol,uout]=simulate_leg_rmhb_GRAC_paramsweep( z0,[0   0.000   10000    0.000],p,tspan);
     animate_param_sweep(sol,p,.1)
 
 %%
- [sol,uout]=simulate_leg_rmhb_GRAC(z0,ctrl,p,tspan);
+ %[sol,uout]=simulate_leg_rmhb_GRAC(z0,ctrl,p,tspan);
 %[t, kout,z, sols, fc] = hybrid_simulation_GRAC(z0,ctrl,p,tspan); % run simulation
-t=sol.x;
-z=sol.y;
-toc
+%t=sol.x;
+%z=sol.y;
+%toc
 %%
 % Plot COM for your submissions
 % figure(1)
