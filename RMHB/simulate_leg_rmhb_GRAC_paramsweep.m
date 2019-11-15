@@ -29,7 +29,7 @@ function tau = control_law(t,z,p,z0,ctrl)
 
         
      %desired angles of leg
-         thki=p(20);   %MAKE SURE THESE MATCH AT THE TOP
+       thki=p(20);   %MAKE SURE THESE MATCH AT THE TOP
        thai=p(21);
     
       thkd=thki;  %theta knee desired
@@ -46,8 +46,8 @@ function tau = control_law(t,z,p,z0,ctrl)
       ba=ctrl(4);
 
       tau = [-(kk*(thkc-thkd)+ bk*(thkvc)) ; -(ka*(thac-thad)+ ba*(thavc))  ]; %WATCH FOR OVERDAMPING
-      %tau(tau>2) = 2;
-      %tau(tau<-2) = -2;
+      tau(tau>2) = 2;
+      tau(tau<-2) = -2;
 %           if tau(1)>2
 %               tau(1)=2;
 %           elseif tau(1)<-2

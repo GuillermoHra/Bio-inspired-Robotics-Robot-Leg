@@ -11,12 +11,12 @@ clear all; close all; clc;
 addpath([pwd '/AutoDerived'])
 p = parameters();                           % get parameters from file
 
-z0 = [.55; p(20);p(21); 0; 0;0; 0]; %y, thk, tha, vy, vk, va ,uank^2                % set initial state
+z0 = [.7; p(20);p(21); 0; 0;0; 0]; %y, thk, tha, vy, vk, va ,uank^2                % set initial state
 
 % set guess
 tspan=[0 .75];                                       % simulation final time
  %% 
-n=15; %number of values to test for each control var
+n=5; %number of values to test for each control var
 Kk=linspace(.1,200,n);
 Bk=linspace(.01,20,n);
 Ka=linspace(.1,200,n);
@@ -78,7 +78,7 @@ toc
     
     
     %%
-    animate_param_sweep_twocompare(sol1,sol2,p,.1)
+    animate_param_sweep_twocompare(sol2,sol1,p,.1)
     
                              
     %%     

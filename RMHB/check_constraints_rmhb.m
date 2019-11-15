@@ -7,7 +7,7 @@ th_k=z(2,:);
 th_a=z(3,:);
 sums=th_h-th_k+th_a;
 
-if min(sums)>0 && max(sums)<pi/2 && min(th_k)>0 && max(th_k)<3*pi/2 && max(abs(uout(1,:))) <= 2 && max(abs(uout(2,:))) <= 2
+if min(sums)>0 && max(sums)<pi/2 && min(th_k)>0 && max(th_k)<3*pi/2
     flag=1;
 else
     flag=0;
