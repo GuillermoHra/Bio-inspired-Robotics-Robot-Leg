@@ -28,8 +28,8 @@ function tau = control_law(t,z,p,z0,ctrl)
 
         
      %desired angles of leg
-       thki=p(20);   %MAKE SURE THESE MATCH AT THE TOP
-       thai=p(21);
+      thki=p(20);   %MAKE SURE THESE MATCH AT THE TOP
+      thai=p(21);
     
       thkd=thki;  %theta knee desired
       thad=thai;    %theta ankle desired

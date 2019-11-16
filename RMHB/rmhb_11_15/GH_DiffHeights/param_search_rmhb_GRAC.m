@@ -16,7 +16,7 @@ z0 = [.5; p(20);p(21); 0; 0;0; 0]; % .9 doesn't work. y, thk, tha, vy, vk, va ,u
 % set guess
 tspan=[0 .75]; % simulation final time
  %% 
-n=10; %number of values to test for each control var
+n=5; %number of values to test for each control var
 Kk=linspace(.1,200,n);
 Bk=linspace(.01,20,n);
 Ka=linspace(.1,200,n);
@@ -32,13 +32,13 @@ for i=1:k
     k
     ctrl=combs_to_check(i,:);
     %tic
-    [sol,uout]=simulate_leg_rmhb_GRAC_paramsweep(z0,ctrl,p,tspan);
+    [sol,uout] = simulate_leg_rmhb_GRAC_paramsweep(z0,ctrl,p,tspan);
     %toc
    % animate_param_sweep(sol,p, .1)
     
-    validflag=check_constraints_rmhb(sol,p, uout);
+    validflag = check_constraints_rmhb(sol,p, uout);
     if validflag==1
-        maxj=get_max_jerk_rmhb(sol,p);
+        maxj = get_max_jerk_rmhb(sol,p);
         valid_configs = [valid_configs; ctrl maxj max(sol.y(7,:))];
     else
         not_valid_configs = [not_valid_configs; ctrl];

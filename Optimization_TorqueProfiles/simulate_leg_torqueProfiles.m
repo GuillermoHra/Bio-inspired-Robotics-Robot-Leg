@@ -4,33 +4,34 @@ close all
 path = 'C:\Users\Usuario\Documents\MATLAB\Bio-inspired Robotics\Final Project Landing Robot\Bio-inspired-Robotics-Robot-Leg';
 addpath([path '\AutoDerived'])
  %% Definte fixed paramters (obtained from CAD)
+ p = parameters();
 % p=[thh0;thh; m1; I1; m2 ;I2; m3 ;I3; m4; I4; l1; l2; l3 ;l4;lc2;lc3;lc4;lh0; g ]; %parameters
-thh0=deg2rad(15);
-thh=deg2rad(45);
-m1=.5;
-I1= 50*10^-6;
-m2=.1;
-I2= 10*10^-6;
-m3=.1;
-I3= 10*10^-6;
-m4=.05;
-I4= 5*10^-6;
-
-l1=.05;
-l2=.15;
-l3=.15 ;
-l4=.075;
-lc2=l2/2;
-lc3=l3/2;
-lc4=l4/2;
-lh0=.03;
-g =9.81;
+% thh0=deg2rad(15);
+% thh=deg2rad(45);
+% m1=.5;
+% I1= 50*10^-6;
+% m2=.1;
+% I2= 10*10^-6;
+% m3=.1;
+% I3= 10*10^-6;
+% m4=.05;
+% I4= 5*10^-6;
+% 
+% l1=.05;
+% l2=.15;
+% l3=.15 ;
+% l4=.075;
+% lc2=l2/2;
+% lc3=l3/2;
+% lc4=l4/2;
+% lh0=.03;
+% g =9.81;
 
     %% Parameter vector make sure this matches Derive_everything_GRAC.m
-    p=[thh0;thh; m1; I1; m2 ;I2; m3 ;I3; m4; I4; l1; l2; l3 ;l4;lc2;lc3;lc4;lh0; g ]; %parameters
+    %p=[thh0;thh; m1; I1; m2 ;I2; m3 ;I3; m4; I4; l1; l2; l3 ;l4;lc2;lc3;lc4;lh0; g ]; %parameters
     %p=[thh0;thh; m1; I1; m2 ;I2; m3 ;I3; m4; I4; l1; l2; l3 ;l4;lc2;lc3;lc4;lh0; g ]; %parameters
      %% Perform Dynamic simulation
-    tspan = [0 .5];
+    tspan = [0 1];
     thki=deg2rad(90);
     thai=deg2rad(75);
     z0 = [.5; thki; thai; 0; 0; 0];
@@ -56,7 +57,6 @@ g =9.81;
 
 
 % Plot torque profiles
-
     torques = [];
     Fc = [];
     for i=1 : length(sol.y)
@@ -88,6 +88,15 @@ g =9.81;
     xlabel('Time (s)')
     ylabel ('Angle')
     
+    figure
+    plot(sol.x, sol.y(1,:))
+    xlabel('Time (s)')
+    ylabel ('Height')
+    title('COM')
+    
+%     maxj = max(abs(diff(diff(diff(sol.y(1,:))))))
+maxj = max(diff(diff(diff(sol.y(1,:)))))
+    
 % 
 %     figure(5); clf;
 %     plot(sol.x,rad2deg(th1_vals))
@@ -95,7 +104,8 @@ g =9.81;
 %     plot(sol.x,rad2deg(th2_vals))
 %     xlabel('Time (s)'); ylabel('Theta (deg)'); legend({'th1','th2'});
 
-    %animateSol(sol,p)
+    figure
+    animateSol(sol,p)
 end
 
 function tau = control_law(t,z,p)
@@ -112,10 +122,10 @@ function tau = control_law(t,z,p)
      thkvc=z(5);%theta knee velocity current
      thavc=z(6);%theta ankle velocity current
      %size(z)
-     KKnee = 120; % 10
-     DKnee = 2; % 2
-     KAnkle = 80; % 50
-     DAnkle = 2; % 5
+     KKnee = 200; % 10 [1-200]
+     DKnee = .1; % 2 [.01-20]
+     KAnkle = 200; % 50
+     DAnkle = .1; % 5
      tau = [ -(KKnee*(thkc-thkd)+ DKnee*(thkvc)) ; -(KAnkle*(thac-thad)+ DAnkle*(thavc)) ]; %WATCH FOR OVERDAMPING
      % tau = [0; -(500*(thac-thad)+ 5*(thavc))  ];
      %tau=[0;0];
@@ -125,8 +135,8 @@ function tau = control_law(t,z,p)
 function Fc = contact_force(z,p)
 
     % Fixed parameters for contact
-    K_c1 = 8000; % was: 1000, 8000       TODO: is it OK if the foot goes below zero??
-    D_c1 = 120; % was: 20, 120
+    K_c1 = 2000; % was: 1000, 8000       TODO: is it OK if the foot goes below zero??
+    D_c1 = 2; % was: 20, 120
     %dC1  = deg2rad(0);
     
     r_E = position_foot(z, p);
