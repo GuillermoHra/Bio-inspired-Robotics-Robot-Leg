@@ -11,12 +11,12 @@ clear all; close all; clc;
 
 p = parameters();                           % get parameters from file
 
-z0 = [.8; p(20);p(21); 0; 0;0; 0]; % .9 doesn't work. y, thk, tha, vy, vk, va ,uank^2. Set initial state
+z0 = [.5; p(20);p(21); 0; 0;0; 0]; % .9 doesn't work. y, thk, tha, vy, vk, va ,uank^2. Set initial state
 
 % set guess
 tspan=[0 .75]; % simulation final time
  %% 
-n=5; %number of values to test for each control var
+n=10; %number of values to test for each control var
 Kk=linspace(.1,200,n);
 Bk=linspace(.01,20,n);
 Ka=linspace(.1,200,n);
