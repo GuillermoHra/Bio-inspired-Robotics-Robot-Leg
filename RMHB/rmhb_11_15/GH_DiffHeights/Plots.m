@@ -42,6 +42,11 @@ close all; clear; clc;
 % ylabel('Torque (Nm)')
 % title('Torque Plots ')
 
+
+
+
+
+
 % load('GH_50_RLimit.mat')
 % [val, idx] = min(abs(valid_configs(:,end)));
 % ctrl_opt_50 = valid_configs(idx,1:4);
@@ -128,6 +133,15 @@ close all; clear; clc;
 % ylabel('D')
 % xlim([0 300])
 % ylim([0 30])
+
+
+
+
+
+
+
+
+
 
 % % Plot torques considering U
 % clear;
@@ -261,117 +275,60 @@ close all; clear; clc;
 
 
 
-% Plot torques considering U (10,000 sweep)
-clear;
-load('GH_50_U10000.mat')
-[val, idx] = mink(abs(valid_configs(:,6)), 100);
-ctrl_opt = [];
-for i=1 : length(idx)
-    ctrl_opt = [ctrl_opt ; valid_configs(idx(i), :)];
-end
-[val, idx] = mink(ctrl_opt(:,5), 50);
-ctrl_opt_50 = [];
-for i=1 : length(idx)
-    ctrl_opt_50 = [ctrl_opt_50 ; valid_configs(idx(i), :)];
-end
-%ctrl_opt_50 = valid_configs(idx, 1:4);
-%[sol_50,uout_50] = simulate_leg_rmhb_GRAC_paramsweep( z0, ctrl_opt_50, p, tspan);
-
-load('GH_70_U10000.mat')
-[val, idx] = mink(abs(valid_configs(:,6)), 100);
-ctrl_opt = [];
-for i=1 : length(idx)
-    ctrl_opt = [ctrl_opt ; valid_configs(idx(i), :)];
-end
-[val, idx] = mink(ctrl_opt(:,5), 50);
-ctrl_opt_70 = [];
-for i=1 : length(idx)
-    ctrl_opt_70 = [ctrl_opt_70 ; valid_configs(idx(i), :)];
-end
-%ctrl_opt_50 = valid_configs(idx, 1:4);
-%[sol_50,uout_50] = simulate_leg_rmhb_GRAC_paramsweep( z0, ctrl_opt_50, p, tspan);
-figure
-hold on
-K_50 = ctrl_opt_50(:,1); % knee
-D_50 = ctrl_opt_50(:,2);
-scatter(K_50, D_50, 'o', 'filled', 'r');
-K_70 = ctrl_opt_70(:,1); % knee
-D_70 = ctrl_opt_70(:,2);
-scatter(K_70, D_70, 'o', 'filled', 'g');
-legend('50', '70')
-xlabel('K')
-ylabel('D')
-xlim([0 300])
-ylim([0 30])
-
-figure
-hold on
-K_50 = ctrl_opt_50(:,3); % ankle
-D_50 = ctrl_opt_50(:,4);
-scatter(K_50, D_50, 'o', 'filled', 'r');
-K_70 = ctrl_opt_70(:,3); % ankle
-D_70 = ctrl_opt_70(:,4);
-scatter(K_70, D_70, 'o', 'filled', 'g');
-legend('50', '70')
-xlabel('K')
-ylabel('D')
-xlim([0 300])
-ylim([0 30])
-
-
-
-
-
-
-
-% % Plot K and D for knee and ankle at different heights
-% load('GH_50_RLimit.mat')
-% [val, idx] = min(abs(valid_configs(:,end)));
-% ctrl_opt = valid_configs(idx,1:4);
-% K = ctrl_opt(1); % knee
-% D = ctrl_opt(2);
-% scatter(K, D, 'o', 'filled', 'r');
-% hold on
-% K = ctrl_opt(3); % ankle
-% D = ctrl_opt(4);
-% scatter(K, D, 'd', 'filled', 'r');
+% % Plot torques considering U (10,000 sweep)
+% clear;
+% load('GH_50_U10000.mat')
+% [val, idx] = mink(abs(valid_configs(:,6)), 100);
+% ctrl_opt = [];
+% for i=1 : length(idx)
+%     ctrl_opt = [ctrl_opt ; valid_configs(idx(i), :)];
+% end
+% [val, idx] = mink(ctrl_opt(:,5), 50);
+% ctrl_opt_50 = [];
+% for i=1 : length(idx)
+%     ctrl_opt_50 = [ctrl_opt_50 ; valid_configs(idx(i), :)];
+% end
+% %ctrl_opt_50 = valid_configs(idx, 1:4);
+% %[sol_50,uout_50] = simulate_leg_rmhb_GRAC_paramsweep( z0, ctrl_opt_50, p, tspan);
 % 
-% load('GH_60_RLimit.mat')
-% [val, idx] = min(abs(valid_configs(:,end)));
-% ctrl_opt = valid_configs(idx,1:4);
-% K = ctrl_opt(1); % knee
-% D = ctrl_opt(2);
+% load('GH_70_U10000.mat')
+% [val, idx] = mink(abs(valid_configs(:,6)), 100);
+% ctrl_opt = [];
+% for i=1 : length(idx)
+%     ctrl_opt = [ctrl_opt ; valid_configs(idx(i), :)];
+% end
+% [val, idx] = mink(ctrl_opt(:,5), 50);
+% ctrl_opt_70 = [];
+% for i=1 : length(idx)
+%     ctrl_opt_70 = [ctrl_opt_70 ; valid_configs(idx(i), :)];
+% end
+% %ctrl_opt_50 = valid_configs(idx, 1:4);
+% %[sol_50,uout_50] = simulate_leg_rmhb_GRAC_paramsweep( z0, ctrl_opt_50, p, tspan);
+% figure
 % hold on
-% scatter(K, D, 'o', 'filled', 'b');
-% K = ctrl_opt(3); % ankle
-% D = ctrl_opt(4);
-% hold on
-% scatter(K, D, 'd', 'filled', 'b');
+% K_50 = ctrl_opt_50(:,1); % knee
+% D_50 = ctrl_opt_50(:,2);
+% scatter(K_50, D_50, 'o', 'filled', 'r');
+% K_70 = ctrl_opt_70(:,1); % knee
+% D_70 = ctrl_opt_70(:,2);
+% scatter(K_70, D_70, 'o', 'filled', 'g');
+% legend('50', '70')
+% xlabel('K')
+% ylabel('D')
+% xlim([0 300])
+% ylim([0 30])
 % 
-% load('GH_70_RLimit.mat')
-% [val, idx] = min(abs(valid_configs(:,end)));
-% ctrl_opt = valid_configs(idx,1:4);
-% K = ctrl_opt(1); % knee
-% D = ctrl_opt(2);
+% figure
 % hold on
-% scatter(K, D, 'o', 'filled', 'g');
-% K = ctrl_opt(3); % ankle
-% D = ctrl_opt(4);
-% hold on
-% scatter(K, D, 'd', 'filled', 'g');
-% 
-% load('GH_80_RLimit.mat')
-% [val, idx] = min(abs(valid_configs(:,end)));
-% ctrl_opt = valid_configs(idx,1:4);
-% K = ctrl_opt(1); % knee
-% D = ctrl_opt(2);
-% hold on
-% scatter(K, D, 'o', 'filled', 'k');
-% K = ctrl_opt(3); % ankle
-% D = ctrl_opt(4);
-% hold on
-% scatter(K, D, 'd', 'filled', 'k');
-% legend('50K', '50A', '60K','60A', '70K', '70A', '80K', '80A')
+% K_50 = ctrl_opt_50(:,3); % ankle
+% D_50 = ctrl_opt_50(:,4);
+% scatter(K_50, D_50, 'o', 'filled', 'r');
+% K_70 = ctrl_opt_70(:,3); % ankle
+% D_70 = ctrl_opt_70(:,4);
+% scatter(K_70, D_70, 'o', 'filled', 'g');
+% legend('50', '70')
+% xlabel('K')
+% ylabel('D')
 % xlim([0 300])
 % ylim([0 30])
 
@@ -380,74 +337,132 @@ ylim([0 30])
 
 
 
-% % Plot 10 K and D values at different heights
-% load('GH_50_RLimit.mat')
-% [val, idx] = mink(abs(valid_configs(:,end)), 10);
-% ctrl_opt = [];
-% for i=1 : length(idx)
-%     ctrl_opt = [ctrl_opt ; valid_configs(idx(i), :)];
-% end
-% %ctrl_opt = valid_configs(idx,1:4);
-% K = ctrl_opt(:,1); % knee
-% D = ctrl_opt(:,2);
-% scatter(K, D, 'o', 'filled', 'r');
-% 
-% hold on
-% K = ctrl_opt(:,3); % ankle
-% D = ctrl_opt(:,4);
-% scatter(K, D, 'd', 'filled', 'r');
-% % title('Knee')
-% 
-% load('GH_60_RLimit.mat')
-% [val, idx] = mink(abs(valid_configs(:,end)), 10);
-% ctrl_opt = [];
-% for i=1 : length(idx)
-%     ctrl_opt = [ctrl_opt ; valid_configs(idx(i), :)];
-% end
-% %ctrl_opt = valid_configs(idx,1:4);
-% K = ctrl_opt(:,1)+1; % knee
-% D = ctrl_opt(:,2)+1;
-% scatter(K, D, 'o', 'filled', 'b');
-% 
-% % figure
-% K = ctrl_opt(:,3); % ankle
-% D = ctrl_opt(:,4);
-% scatter(K, D, 'd', 'filled', 'b');
-% % title('Knee')
-% 
-% load('GH_70_RLimit.mat')
-% [val, idx] = mink(abs(valid_configs(:,end)), 10);
-% ctrl_opt = [];
-% for i=1 : length(idx)
-%     ctrl_opt = [ctrl_opt ; valid_configs(idx(i), :)];
-% end
-% %ctrl_opt = valid_configs(idx,1:4);
-% K = ctrl_opt(:,1)+2; % knee
-% D = ctrl_opt(:,2)+2;
-% scatter(K, D, 'o', 'filled', 'g');
-% 
-% % figure
-% K = ctrl_opt(:,3); % ankle
-% D = ctrl_opt(:,4);
-% scatter(K, D, 'd', 'filled', 'g');
-% % title('Knee')
-% 
-% load('GH_80_RLimit.mat')
-% [val, idx] = mink(abs(valid_configs(:,end)), 10);
-% ctrl_opt = [];
-% for i=1 : length(idx)
-%     ctrl_opt = [ctrl_opt ; valid_configs(idx(i), :)];
-% end
-% %ctrl_opt = valid_configs(idx,1:4);
-% K = ctrl_opt(:,1)+1; % knee
-% D = ctrl_opt(:,2)+1;
-% scatter(K, D, 'o', 'filled', 'k');
-% 
-% % figure
-% K = ctrl_opt(:,3); % ankle
-% D = ctrl_opt(:,4);
-% scatter(K, D, 'd', 'filled', 'k');
-% xlim([0 300])
-% ylim([0 30])
-% % title('Knee')
+
+% Plot K and D for knee and ankle at different heights
+figure
+load('GH_50_RLimit.mat')
+[val, idx] = min(abs(valid_configs(:,end)));
+ctrl_opt = valid_configs(idx,1:4);
+K = ctrl_opt(1); % knee
+D = ctrl_opt(2);
+scatter(K, D, 'o', 'filled', 'r');
+hold on
+K = ctrl_opt(3); % ankle
+D = ctrl_opt(4);
+scatter(K, D, 'd', 'filled', 'r');
+
+load('GH_60_RLimit.mat')
+[val, idx] = min(abs(valid_configs(:,end)));
+ctrl_opt = valid_configs(idx,1:4);
+K = ctrl_opt(1); % knee
+D = ctrl_opt(2);
+hold on
+scatter(K, D, 'o', 'filled', 'b');
+K = ctrl_opt(3); % ankle
+D = ctrl_opt(4);
+hold on
+scatter(K, D, 'd', 'filled', 'b');
+
+load('GH_70_RLimit.mat')
+[val, idx] = min(abs(valid_configs(:,end)));
+ctrl_opt = valid_configs(idx,1:4);
+K = ctrl_opt(1); % knee
+D = ctrl_opt(2);
+hold on
+scatter(K, D, 'o', 'filled', 'g');
+K = ctrl_opt(3); % ankle
+D = ctrl_opt(4);
+hold on
+scatter(K, D, 'd', 'filled', 'g');
+
+load('GH_80_RLimit.mat')
+[val, idx] = min(abs(valid_configs(:,end)));
+ctrl_opt = valid_configs(idx,1:4);
+K = ctrl_opt(1); % knee
+D = ctrl_opt(2);
+hold on
+scatter(K, D, 'o', 'filled', 'k');
+K = ctrl_opt(3); % ankle
+D = ctrl_opt(4);
+hold on
+scatter(K, D, 'd', 'filled', 'k');
+legend('50K', '50A', '60K','60A', '70K', '70A', '80K', '80A')
+xlim([0 300])
+ylim([0 30])
+
+
+
+
+
+
+% Plot 10 K and D values at different heights
+load('GH_50_RLimit.mat')
+[val, idx] = mink(abs(valid_configs(:,end)), 10);
+ctrl_opt = [];
+for i=1 : length(idx)
+    ctrl_opt = [ctrl_opt ; valid_configs(idx(i), :)];
+end
+%ctrl_opt = valid_configs(idx,1:4);
+K = ctrl_opt(:,1); % knee
+D = ctrl_opt(:,2);
+scatter(K, D, 'o', 'filled', 'r');
+
+hold on
+K = ctrl_opt(:,3); % ankle
+D = ctrl_opt(:,4);
+scatter(K, D, 'd', 'filled', 'r');
+% title('Knee')
+
+load('GH_60_RLimit.mat')
+[val, idx] = mink(abs(valid_configs(:,end)), 10);
+ctrl_opt = [];
+for i=1 : length(idx)
+    ctrl_opt = [ctrl_opt ; valid_configs(idx(i), :)];
+end
+%ctrl_opt = valid_configs(idx,1:4);
+K = ctrl_opt(:,1)+1; % knee
+D = ctrl_opt(:,2)+1;
+scatter(K, D, 'o', 'filled', 'b');
+
+% figure
+K = ctrl_opt(:,3); % ankle
+D = ctrl_opt(:,4);
+scatter(K, D, 'd', 'filled', 'b');
+% title('Knee')
+
+load('GH_70_RLimit.mat')
+[val, idx] = mink(abs(valid_configs(:,end)), 10);
+ctrl_opt = [];
+for i=1 : length(idx)
+    ctrl_opt = [ctrl_opt ; valid_configs(idx(i), :)];
+end
+%ctrl_opt = valid_configs(idx,1:4);
+K = ctrl_opt(:,1)+2; % knee
+D = ctrl_opt(:,2)+2;
+scatter(K, D, 'o', 'filled', 'g');
+
+% figure
+K = ctrl_opt(:,3); % ankle
+D = ctrl_opt(:,4);
+scatter(K, D, 'd', 'filled', 'g');
+% title('Knee')
+
+load('GH_80_RLimit.mat')
+[val, idx] = mink(abs(valid_configs(:,end)), 10);
+ctrl_opt = [];
+for i=1 : length(idx)
+    ctrl_opt = [ctrl_opt ; valid_configs(idx(i), :)];
+end
+%ctrl_opt = valid_configs(idx,1:4);
+K = ctrl_opt(:,1)+1; % knee
+D = ctrl_opt(:,2)+1;
+scatter(K, D, 'o', 'filled', 'k');
+
+% figure
+K = ctrl_opt(:,3); % ankle
+D = ctrl_opt(:,4);
+scatter(K, D, 'd', 'filled', 'k');
+xlim([0 300])
+ylim([0 30])
+% title('Knee')
 

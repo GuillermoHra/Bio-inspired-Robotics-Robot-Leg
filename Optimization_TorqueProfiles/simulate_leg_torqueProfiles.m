@@ -135,8 +135,8 @@ function tau = control_law(t,z,p)
 function Fc = contact_force(z,p)
 
     % Fixed parameters for contact
-    K_c1 = 2000; % was: 1000, 8000       TODO: is it OK if the foot goes below zero??
-    D_c1 = 2; % was: 20, 120
+    K_c1 = 1000; % was:2000,  1000, 8000       TODO: is it OK if the foot goes below zero??
+    D_c1 = 20; % was: 2, 20, 120
     %dC1  = deg2rad(0);
     
     r_E = position_foot(z, p);
