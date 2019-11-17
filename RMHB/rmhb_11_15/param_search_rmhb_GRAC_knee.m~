@@ -11,12 +11,11 @@ clear all; close all; clc;
 addpath([pwd '/AutoDerived'])
 p = parameters();                           % get parameters from file
 
-h=linspace(.5,1,25);
-h=1;
+h=linspace(.5,2,50);
 z0 = [.6; p(20);0; 0]; %y, thk, tha, vy, vk, va ,uank^2                % set initial state
 
 % set guess
-tspan=[0 1.5];                                       % simulation final time
+tspan=[0 .5];                                       % simulation final time
  %% 
 n=40; %number of values to test for each control var
 Kk=linspace(.1,100,n);
@@ -56,22 +55,16 @@ toc
     figure(1)
     plot(valid_configs(:,end),'k*')
     %%
-    figure(5)
-    plot3(valid_configs(:,2),valid_configs(:,3),valid_configs(:,end),'k*')
-    xlabel('K')
-    ylabel('B')
-    zlabel('J')
-    %%
     figure(2)
     [val, idx]=min(abs(valid_configs(:,end)));
-    ctrl_opt=valid_configs(idx,2:3);
+    ctrl_opt=valid_configs(idx,1:2);
     [sol,uout]=simulate_leg_rmhb_GRAC_paramsweep_knee(z0,ctrl_opt,p,tspan);
     animate_param_sweep_knee(sol,p,.1)
-   
+    
     %%
     figure(3)
     [val, idx]=max(abs(valid_configs(:,end)));
-    ctrl_nopt=valid_configs(idx,2:3);
+    ctrl_nopt=valid_configs(idx,1:2);
     [sol,uout]=simulate_leg_rmhb_GRAC_paramsweep_knee(z0,ctrl_nopt,p,tspan);
     animate_param_sweep_knee(sol,p,.1)
                              
