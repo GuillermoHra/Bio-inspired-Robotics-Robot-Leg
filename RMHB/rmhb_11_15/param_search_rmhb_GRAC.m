@@ -14,26 +14,30 @@ p = parameters();                           % get parameters from file
 z0 = [.7; p(20);p(21); 0; 0;0; 0]; %y, thk, tha, vy, vk, va ,uank^2                % set initial state
 
 % set guess
-tspan=[0 .75];                                       % simulation final time
+tspan=[0 1.5];                                       % simulation final time
+h=linspace(.5,1.5,25);
  %% 
-n=5; %number of values to test for each control var
+n=40; %number of values to test for each control var
 %Kk=linspace(.1,200,n);
 %Bk=linspace(.01,20,n);
+
 Kk=100;
 Bk=50;
-Ka=linspace(.1,25,n);
-Ba=linspace(.01,1,n);
-Ka=25;
-Ba=1;
+Ka=linspace(.1,100,n);
+Ba=linspace(.01,20,n);
+
 combs_to_check=allcomb(Kk,Bk,Ka,Ba);
 k=length(combs_to_check(:,1));
 valid_configs=[];
 not_valid_configs=[];
 tic
+for j=1:length(h)
 for i=1:k
     i
+    j
     k
     ctrl=combs_to_check(i,:);
+    z0 = [h(j); p(20);p(21); 0; 0;0; 0];
     %tic
     [sol,uout]=simulate_leg_rmhb_GRAC_paramsweep(z0,ctrl,p,tspan);
     %toc
@@ -42,10 +46,11 @@ for i=1:k
     validflag=check_constraints_rmhb(sol,p, uout);
     if validflag==1
         maxj=get_max_jerk_rmhb(sol,p);
-        valid_configs=[valid_configs; ctrl maxj];
+        valid_configs=[valid_configs; ctrl z0 sum(uout.^2)  maxj];
     else
         not_valid_configs=[not_valid_configs; ctrl];
     end
+end
 end
 disp('total time')
 toc
@@ -105,7 +110,7 @@ toc
     %%     
     p = parameters();    
 
-    [sol,uout]=simulate_leg_rmhb_GRAC_paramsweep( z0,[0   0.000   10000    0.000],p,tspan);
+    [sol,uout]=simulate_leg_rmhb_GRAC_paramsweep( z0,[100   50.000   100    20.000],p,tspan);
     animate_param_sweep(sol,p,.1)
 
 %%
