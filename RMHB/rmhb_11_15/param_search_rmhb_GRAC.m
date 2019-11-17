@@ -33,9 +33,8 @@ not_valid_configs=[];
 tic
 for j=1:length(h)
 for i=1:k
-    i
-    j
-    k
+    [i k j length(h)]
+    
     ctrl=combs_to_check(i,:);
     z0 = [h(j); p(20);p(21); 0; 0;0; 0];
     %tic
@@ -46,7 +45,7 @@ for i=1:k
     validflag=check_constraints_rmhb(sol,p, uout);
     if validflag==1
         maxj=get_max_jerk_rmhb(sol,p);
-        valid_configs=[valid_configs; ctrl z0 sum(uout.^2)  maxj];
+        valid_configs=[valid_configs; ctrl z0(1) sum(uout(1,:).^2 + uout(2,:).^2)  maxj];
     else
         not_valid_configs=[not_valid_configs; ctrl];
     end
