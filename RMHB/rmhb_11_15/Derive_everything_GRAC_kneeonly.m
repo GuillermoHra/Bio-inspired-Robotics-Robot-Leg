@@ -1,13 +1,14 @@
 function derive_everything_GRAC()
 name='GRAC_leg';
 addpath([pwd '/AutoDerived'])
-syms t y dy ddy thh0 thh thk  tha dthk dtha ddthk ddtha tauk taua Fy m1 I1 m2 I2 m3 I3 m4 I4 l1 l2 l3 l4 lc2 lc3 lc4 lh0 g thm thki thai real
+syms t y dy ddy thh0 thh thk  tha dthk dtha ddthk ddtha tauk taua Fy Fx m1 I1 m2 I2 m3 I3 m4 I4 l1 l2 l3 l4 lc2 lc3 lc4 lh0 g thm thki thai real
 
 q= [y;thk];  %generalized coordinates, theta knee, theta ankle
 dq=[dy;dthk]; %first time derivatives
 ddq=[ddy;ddthk]; %second time derivatives
 u=[tauk];  %control torques for knee and ankle
 Fc=Fy;           %constraint forces and moments
+Ff=Fx;
 p=[thh0;thh; m1; I1; m2 ;I2; m3 ;I3; m4; I4; l1; l2; l3 ;l4;lc2;lc3;lc4;lh0; g ;thki;thai]; %parameters
     
 %%% Calculate important vectors and their time derivatives.
@@ -81,12 +82,13 @@ V3 = m3*g*dot(rcm3, jhat);
 % Define contributions to generalized forces.  See Lecture 6 formulas for
 % contributions to generalized forces.
 QF = F2Q(Fy*jhat,ra);
+QFf = F2Q(Fx*ihat,ra);
 Qtauk = M2Q(tauk*khat, dthk*khat);
 %Qtaua = M2Q(taua*khat, dtha*khat);  %need to work out the signs
 
 T = T1 + T2 + T3;% + T4;
 V = V1 + V2 + V3;% + V4;
-Q = QF + Qtauk;% + Qtaua;
+Q = QF+QFf + Qtauk;% + Qtaua;
 
 % Calculate rcm, the location of the center of mass
 %rcm = (m1*rcm1 + m2*rcm2 + mh*rh)/(m1+m2+mh); rcm for us is the COM of the
@@ -122,7 +124,7 @@ matlabFunction(E,'file',[directory 'kenergy_' name],'vars',{z p});
 % Write a function to evaluate the A matrix of the system given the current state and parameters
 matlabFunction(A,'file',[directory 'kA_' name],'vars',{z p});
 % Write a function to evaluate the b vector of the system given the current state, current control, and parameters
-matlabFunction(b,'file',[directory 'kb_' name],'vars',{z u Fc p});
+matlabFunction(b,'file',[directory 'kb_' name],'vars',{z u Fc Ff p});
 
 matlabFunction(keypoints,'file',[directory 'kkeypoints_' name],'vars',{z p});
 

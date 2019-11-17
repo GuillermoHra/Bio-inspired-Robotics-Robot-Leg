@@ -67,10 +67,10 @@ function tau = control_law(t,z,p,z0,ctrl)
 
    end
 
-function Fc = contact_force(z,p,z0)
+function [Fc, Ff] = contact_force(z,p,z0)
 
     % Fixed parameters for contact
-    K_c1 = 1000;
+    K_c1 = 10000;
     D_c1 = 20;
     dC1  = deg2rad(0);
     
@@ -83,8 +83,10 @@ function Fc = contact_force(z,p,z0)
     Cdot=r_a_dot(2);
     if C>0
         Fc=0;
+        Ff=0;
     else
         Fc=-K_c1*C - D_c1*Cdot;
+       Ff=-10*r_a_dot(1);
        
     end
     
@@ -94,18 +96,19 @@ function dz = dynamics(t,z,p,z0,ctrl)
     y = z(1);     th1 = z(2);    
    yd= z(3);     th1d= z(4);     
     
-         
+        
+             
     % Get mass matrix
     A = kA_GRAC_leg(z,p);
     
     % Compute Controls
     tau = control_law(t,z,p,z0,ctrl);
-    Fc=contact_force(z,p,z0);
+    [Fc,Ff]=contact_force(z,p,z0);
     
 
-    b = kb_GRAC_leg(z,tau,Fc,p);
+    b = kb_GRAC_leg(z,tau,Fc,Ff,p);
   
-    QFc= [0 ;  Fc];
+    QFc= [Ff ;  Fc];
         
     % Solve for qdd.
 

@@ -18,8 +18,13 @@ thki=p(20); thai=p(21);
     uout=[];
     sol = ode45(@dynamics,tspan,z0,opts,p,z0,ctrl);
    
-    sol.k=ctrl;   
-    uout=[uout control_law(sol.x,sol.y,p,z0,ctrl)];
+    sol.k=ctrl; 
+    val=control_law(sol.x,sol.y,p,z0,ctrl);    
+    val2=val(2,:);
+     val2(val2>2) = 2;
+      val2(val2<-2) = -2;
+     val(2,:)=val2;
+    uout=[uout val];
    
     
 end
@@ -46,14 +51,17 @@ function tau = control_law(t,z,p,z0,ctrl)
       ba=ctrl(4);
 
       tau = [-(kk*(thkc-thkd)+ bk*(thkvc)) ; -(ka*(thac-thad)+ ba*(thavc))  ]; %WATCH FOR OVERDAMPING
-      tau(tau>2) = 2;
-      tau(tau<-2) = -2;
-%           if tau(1)>2
-%               tau(1)=2;
-%           elseif tau(1)<-2
-%                   
-%             tau(1)=-2;
-%           end
+
+      %      tau(tau>2) = 2;
+     % tau(tau<-2) = -2;
+     
+      
+          if tau(2)>2
+              tau(2)=2;
+          elseif tau(2)<-2
+                  
+            tau(2)=-2;
+          end
               
               
      
@@ -67,7 +75,7 @@ function tau = control_law(t,z,p,z0,ctrl)
 
    end
 
-function Fc = contact_force(z,p,z0)
+function [Fc, Ff] = contact_force(z,p,z0)
 
     % Fixed parameters for contact
     K_c1 = 1000;
@@ -83,8 +91,10 @@ function Fc = contact_force(z,p,z0)
     Cdot=r_E_dot(2);
     if C>0
         Fc=0;
+        Ff=0;
     else
         Fc=-K_c1*C - D_c1*Cdot;
+        Ff=-.4*r_E_dot(1);
        
     end
     
@@ -100,10 +110,10 @@ function dz = dynamics(t,z,p,z0,ctrl)
     
     % Compute Controls
     tau = control_law(t,z,p,z0,ctrl);
-    Fc=contact_force(z,p,z0);
+    [Fc, Ff]=contact_force(z,p,z0);
     
 
-    b = b_GRAC_leg(z,tau,Fc,p);
+    b = b_GRAC_leg(z,tau,Fc,Ff,p);
   
     
         
