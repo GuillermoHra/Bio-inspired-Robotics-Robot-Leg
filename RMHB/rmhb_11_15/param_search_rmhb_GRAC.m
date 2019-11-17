@@ -17,13 +17,16 @@ z0 = [.7; p(20);p(21); 0; 0;0; 0]; %y, thk, tha, vy, vk, va ,uank^2             
 tspan=[0 .75];                                       % simulation final time
  %% 
 n=5; %number of values to test for each control var
-Kk=linspace(.1,200,n);
-Bk=linspace(.01,20,n);
-Ka=linspace(.1,200,n);
-Ba=linspace(.01,20,n);
-
+%Kk=linspace(.1,200,n);
+%Bk=linspace(.01,20,n);
+Kk=100;
+Bk=50;
+Ka=linspace(.1,25,n);
+Ba=linspace(.01,1,n);
+Ka=25;
+Ba=1;
 combs_to_check=allcomb(Kk,Bk,Ka,Ba);
-k=length(combs_to_check);
+k=length(combs_to_check(:,1));
 valid_configs=[];
 not_valid_configs=[];
 tic
@@ -80,7 +83,7 @@ toc
     
     
     %%
-<<<<<<< HEAD
+
     figure
     animate_param_sweep_twocompare(sol1,sol2,p,.1)
     
@@ -88,13 +91,20 @@ toc
     %%  
     figure
        p = parameters();    
-=======
+
     animate_param_sweep_twocompare(sol2,sol1,p,.1)
+    %%
+      figure
+       p = parameters();    
+    ctrl_noopt=not_valid_configs(2,1:4);
+    [sol3,uout3]=simulate_leg_rmhb_GRAC_paramsweep(z0,ctrl_noopt,p,tspan);
+    animate_param_sweep_twocompare(sol3,sol3,p,.1)
+    
     
                              
     %%     
     p = parameters();    
->>>>>>> 8b4000b0ad48a3233bd4eab8a32e5ac970f1608e
+
     [sol,uout]=simulate_leg_rmhb_GRAC_paramsweep( z0,[0   0.000   10000    0.000],p,tspan);
     animate_param_sweep(sol,p,.1)
 

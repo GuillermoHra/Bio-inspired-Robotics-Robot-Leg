@@ -25,6 +25,7 @@ Bk=linspace(.001,15,n);
 %Ba=linspace(.1,50,n);
 
 combs_to_check=allcomb(Kk,Bk);%,Ka,Ba);
+combs_to_check=combs_to_check(end,:);
 k=length(combs_to_check);
 valid_configs=[];
 not_valid_configs=[];
@@ -77,9 +78,9 @@ toc
                              
     %%     [sol,uout]=simulate_leg_rmhb_GRAC(z0,ctrl,p,tspan);
 figure(4)        
-    [sol,uout]=simulate_leg_rmhb_GRAC_paramsweep_knee(z0,[2   .1000  ],p,tspan);
+    [sol,uout]=simulate_leg_rmhb_GRAC_paramsweep_knee(z0,[50   5  ],p,tspan);
     max(abs(uout))
-    animate_param_sweep_knee(sol,p,.1)
+    animate_param_sweep_knee(sol,p,.05)
 
 %%
  

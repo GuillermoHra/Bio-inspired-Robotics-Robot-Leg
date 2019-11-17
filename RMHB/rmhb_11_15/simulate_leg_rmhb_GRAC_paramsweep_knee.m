@@ -86,7 +86,8 @@ function [Fc, Ff] = contact_force(z,p,z0)
         Ff=0;
     else
         Fc=-K_c1*C - D_c1*Cdot;
-       Ff=0.4*-r_a_dot(1);
+       Ff=-10*r_a_dot(1);
+       
     end
     
 end
@@ -95,7 +96,8 @@ function dz = dynamics(t,z,p,z0,ctrl)
     y = z(1);     th1 = z(2);    
    yd= z(3);     th1d= z(4);     
     
-         
+        
+             
     % Get mass matrix
     A = kA_GRAC_leg(z,p);
     

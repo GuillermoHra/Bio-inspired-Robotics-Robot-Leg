@@ -82,7 +82,7 @@ V3 = m3*g*dot(rcm3, jhat);
 % Define contributions to generalized forces.  See Lecture 6 formulas for
 % contributions to generalized forces.
 QF = F2Q(Fy*jhat,ra);
-QFf = F2Q(Fx*jhat,ra);
+QFf = F2Q(Fx*ihat,ra);
 Qtauk = M2Q(tauk*khat, dthk*khat);
 %Qtaua = M2Q(taua*khat, dtha*khat);  %need to work out the signs
 
