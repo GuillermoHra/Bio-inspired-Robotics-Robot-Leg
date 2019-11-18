@@ -6,12 +6,26 @@ th_h=p(2);
 th_k=z(2,:);
 th_a=z(3,:);
 sums=th_h-th_k+th_a;
+yaprev=100;
 
-if min(sums)>0 && max(sums)<pi/2 && min(th_k)>0 && max(th_k)<3*pi/2
+
+if min(sums)>0 && max(sums)<pi/2 && min(th_k)>0 && max(th_k)<3*pi/2 && min(th_a)>-pi && max(th_a)< pi
+    for i=1:length(z(1,:))
+        ya=position_ankle(z(:,i),p);
+        if ya<yaprev
+            yaprev=ya;
+        end
+    end
+    if yaprev <0
+        flag=0;
+    else         
     flag=1;
-else
-    flag=0;
-end
+    end
     
+else
+    
+    flag=0;
+   
+
                      
 end

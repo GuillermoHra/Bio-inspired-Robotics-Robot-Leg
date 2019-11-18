@@ -61,22 +61,57 @@ toc
     figure
     X = valid_configs(:,1);
     Y = valid_configs(:,2);
-    Z = valid_configs(:,5);
+    Z = valid_configs(:,end);
     plot3(X, Y, Z, '*');
     title('Knee')
     
     figure
     X = valid_configs(:,3);
     Y = valid_configs(:,4);
-    Z = valid_configs(:,5);
+    Z = valid_configs(:,end);
     plot3(X, Y, Z, '*');
     title('Ankle')
+    
+    
+       figure
+    X = valid_configs(:,3);
+    Y = valid_configs(:,4);
+    Z = valid_configs(:,end);
+    Z0=valid_configs(:,5);
+   rgb = vals2colormap(Z0);
+    %plot3(X,Y,Z,'marker','.','markeredgecolor',rgb)
+    scatter3(X,Y,Z,2,rgb)
+    xlabel('K')
+    ylabel('B')
+    zlabel('Max Jerk')
+    colorbar
+    caxis([min(Z0) max(Z0)])
+    title('Ankle')
+    
+    
     %%
+    
+    
+    %%
+    
     figure
+    goodsolflag=0;
+    i=1
+    while goodsolflag==0
+        
     [val, idx]=min(abs(valid_configs(:,end)));
     ctrl_opt=valid_configs(idx,1:4);
-    [sol1,uout1]=simulate_leg_rmhb_GRAC_paramsweep(z0,ctrl_opt,p,tspan);
-    animate_param_sweep(sol1,p,.1)
+    [solc,uoutc]=simulate_leg_rmhb_GRAC_paramsweep(z0,ctrl_opt,p,tspan);
+    goodsolflag=check_constraints_rmhb(solc,p, uoutc);
+    if goodsolflag==0
+        valid_configs(idx,:) = [];
+    end
+    i=i+1
+    end
+    animate_param_sweep(solc,p,.1)
+    
+    %%
+    
     
     %%
     figure
