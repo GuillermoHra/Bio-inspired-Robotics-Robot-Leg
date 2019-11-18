@@ -131,6 +131,7 @@ matlabFunction(keypoints,'file',[directory 'keypoints_' name],'vars',{z p});
 matlabFunction(C,'file',[directory 'C_' name],'vars',{z u p});
 matlabFunction(dC,'file',[directory 'dC_' name],'vars',{z u p});
 matlabFunction(re,'file',[directory 'position_foot'],'vars',{z p});
+matlabFunction(ra,'file',[directory 'position_ankle'],'vars',{z p});
 matlabFunction(dre,'file',[directory 'velocity_foot'],'vars',{z p});
 % Write a function to evaluate the X and Y coordinates and speeds of the center of mass given the current state and parameters
 drcm =drcm1 ; % ddt(rcm);  % Calculate center of mass velocity vector

@@ -15,9 +15,9 @@ z0 = [.7; p(20);p(21); 0; 0;0; 0]; %y, thk, tha, vy, vk, va ,uank^2             
 
 % set guess
 tspan=[0 1.5];                                       % simulation final time
-h=linspace(.5,1.5,25);
+h=linspace(.5,1.5,11);
  %% 
-n=40; %number of values to test for each control var
+n=10; %number of values to test for each control var
 %Kk=linspace(.1,200,n);
 %Bk=linspace(.01,20,n);
 
@@ -30,6 +30,7 @@ combs_to_check=allcomb(Kk,Bk,Ka,Ba);
 k=length(combs_to_check(:,1));
 valid_configs=[];
 not_valid_configs=[];
+solarray=[];
 tic
 for j=1:length(h)
 for i=1:k
@@ -39,6 +40,7 @@ for i=1:k
     z0 = [h(j); p(20);p(21); 0; 0;0; 0];
     %tic
     [sol,uout]=simulate_leg_rmhb_GRAC_paramsweep(z0,ctrl,p,tspan);
+    sol.u=uout;
     %toc
    % animate_param_sweep(sol,p, .1)
     
@@ -46,6 +48,7 @@ for i=1:k
     if validflag==1
         maxj=get_max_jerk_rmhb(sol,p);
         valid_configs=[valid_configs; ctrl z0(1) sum(uout(1,:).^2 + uout(2,:).^2)  maxj];
+        solarray=[solarray;sol];
     else
         not_valid_configs=[not_valid_configs; ctrl];
     end
@@ -61,22 +64,57 @@ toc
     figure
     X = valid_configs(:,1);
     Y = valid_configs(:,2);
-    Z = valid_configs(:,5);
+    Z = valid_configs(:,end);
     plot3(X, Y, Z, '*');
     title('Knee')
     
     figure
     X = valid_configs(:,3);
     Y = valid_configs(:,4);
-    Z = valid_configs(:,5);
+    Z = valid_configs(:,end);
     plot3(X, Y, Z, '*');
     title('Ankle')
+    
+    
+       figure
+    X = valid_configs(:,3);
+    Y = valid_configs(:,4);
+    Z = valid_configs(:,end);
+    Z0=valid_configs(:,5);
+   rgb = vals2colormap(Z0);
+    %plot3(X,Y,Z,'marker','.','markeredgecolor',rgb)
+    scatter3(X,Y,Z,2,rgb)
+    xlabel('K')
+    ylabel('B')
+    zlabel('Max Jerk')
+    colorbar
+    caxis([min(Z0) max(Z0)])
+    title('Ankle')
+    
+    
     %%
+    
+    
+    %%
+    
     figure
+    goodsolflag=0;
+    i=1
+    while goodsolflag==0
+        
     [val, idx]=min(abs(valid_configs(:,end)));
     ctrl_opt=valid_configs(idx,1:4);
-    [sol1,uout1]=simulate_leg_rmhb_GRAC_paramsweep(z0,ctrl_opt,p,tspan);
-    animate_param_sweep(sol1,p,.1)
+    [solc,uoutc]=simulate_leg_rmhb_GRAC_paramsweep(z0,ctrl_opt,p,tspan);
+    goodsolflag=check_constraints_rmhb(solc,p, uoutc);
+    if goodsolflag==0
+        valid_configs(idx,:) = [];
+    end
+    i=i+1
+    end
+    animate_param_sweep(solc,p,.1)
+    
+    %%
+    
     
     %%
     figure

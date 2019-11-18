@@ -33,8 +33,8 @@ not_valid_configs=[];
 tic
 for j=1:length(h)
 for i=1:k
-    i
-    k
+    [i k j length(h)]
+    
     ctrl=combs_to_check(i,:);
     z0 = [h(j); p(20);p(21); 0; 0;0; 0];
     %tic
@@ -45,7 +45,7 @@ for i=1:k
     validflag=check_constraints_rmhb(sol,p, uout);
     if validflag==1
         maxj=get_max_jerk_rmhb(sol,p);
-        valid_configs=[valid_configs; ctrl z0 sum(uout.^2)  maxj];
+        valid_configs=[valid_configs; ctrl z0(1) sum(uout(1,:).^2 + uout(2,:).^2)  maxj];
     else
         not_valid_configs=[not_valid_configs; ctrl];
     end
@@ -72,11 +72,28 @@ toc
     plot3(X, Y, Z, '*');
     title('Ankle')
     %%
+    
+    
+    %%
+    
     figure
+    goodsolflag=0;
+    i=1
+    while goodsolflag==0
+        i
     [val, idx]=min(abs(valid_configs(:,end)));
     ctrl_opt=valid_configs(idx,1:4);
-    [sol1,uout1]=simulate_leg_rmhb_GRAC_paramsweep(z0,ctrl_opt,p,tspan);
-    animate_param_sweep(sol1,p,.1)
+    [solc,uoutc]=simulate_leg_rmhb_GRAC_paramsweep(z0,ctrl_opt,p,tspan);
+    goodsolflag=check_constraints_rmhb(solc,p, uoutc);
+    if goodsolflag==0
+        valid_configs(idx,:) = [];
+    end
+    
+    end
+    animate_param_sweep(solc,p,.1)
+    
+    %%
+    
     
     %%
     figure
