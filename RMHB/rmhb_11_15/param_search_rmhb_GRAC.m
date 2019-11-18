@@ -15,9 +15,9 @@ z0 = [.7; p(20);p(21); 0; 0;0; 0]; %y, thk, tha, vy, vk, va ,uank^2             
 
 % set guess
 tspan=[0 1.5];                                       % simulation final time
-h=linspace(.5,1.5,25);
+h=linspace(.5,1.5,11);
  %% 
-n=40; %number of values to test for each control var
+n=10; %number of values to test for each control var
 %Kk=linspace(.1,200,n);
 %Bk=linspace(.01,20,n);
 
@@ -30,6 +30,7 @@ combs_to_check=allcomb(Kk,Bk,Ka,Ba);
 k=length(combs_to_check(:,1));
 valid_configs=[];
 not_valid_configs=[];
+solarray=[];
 tic
 for j=1:length(h)
 for i=1:k
@@ -39,6 +40,7 @@ for i=1:k
     z0 = [h(j); p(20);p(21); 0; 0;0; 0];
     %tic
     [sol,uout]=simulate_leg_rmhb_GRAC_paramsweep(z0,ctrl,p,tspan);
+    sol.u=uout;
     %toc
    % animate_param_sweep(sol,p, .1)
     
@@ -46,6 +48,7 @@ for i=1:k
     if validflag==1
         maxj=get_max_jerk_rmhb(sol,p);
         valid_configs=[valid_configs; ctrl z0(1) sum(uout(1,:).^2 + uout(2,:).^2)  maxj];
+        solarray=[solarray;sol];
     else
         not_valid_configs=[not_valid_configs; ctrl];
     end
