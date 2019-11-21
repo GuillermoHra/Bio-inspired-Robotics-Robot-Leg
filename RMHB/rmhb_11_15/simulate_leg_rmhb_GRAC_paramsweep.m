@@ -19,11 +19,14 @@ thki=p(20); thai=p(21);
     sol = ode45(@dynamics,tspan,z0,opts,p,z0,ctrl);
    
     sol.k=ctrl; 
-    val=control_law(sol.x,sol.y,p,z0,ctrl);    
-    val2=val(2,:);
-     val2(val2>2) = 2;
-      val2(val2<-2) = -2;
-     val(2,:)=val2;
+    val=control_law(sol.x,sol.y,p,z0,ctrl);  
+    
+    %ankle torque limits
+%     val2=val(2,:);
+%      val2(val2>2) = 2;
+%       val2(val2<-2) = -2;
+%      val(2,:)=val2;
+     %---
     uout=[uout val];
    
     
@@ -52,16 +55,16 @@ function tau = control_law(t,z,p,z0,ctrl)
 
       tau = [-(kk*(thkc-thkd)+ bk*(thkvc)) ; -(ka*(thac-thad)+ ba*(thavc))  ]; %WATCH FOR OVERDAMPING
 
-      %      tau(tau>2) = 2;
-     % tau(tau<-2) = -2;
+%      tau(tau>2) = 2;
+%      tau(tau<-2) = -2;
      
       
-          if tau(2)>2
-              tau(2)=2;
-          elseif tau(2)<-2
-                  
-            tau(2)=-2;
-          end
+%           if tau(2)>2
+%               tau(2)=2;
+%           elseif tau(2)<-2
+%                   
+%             tau(2)=-2;
+%           end
               
               
      
